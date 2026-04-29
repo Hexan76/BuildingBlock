@@ -5,7 +5,7 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="MediatR" />
-        <PackageReference Include="Volo.Abp.AutoMapper" />
+        <PackageReference Include="Volo.Abp.LuckyPenny.AutoMapper" />
         <PackageReference Include="Volo.Abp.Ddd.Application" />
         <ProjectReference Include="..\Framework.BuildingBlock.Application.Contracts\Framework.BuildingBlock.Application.Contracts.csproj" />
         <ProjectReference Include="..\Framework.BuildingBlock.Domain\Framework.BuildingBlock.Domain.csproj" />

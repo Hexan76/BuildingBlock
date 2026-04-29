@@ -14,7 +14,7 @@ namespace Framework.BuildingBlock.Application;
     typeof(BuildingBlockDomainModule),
     typeof(BuildingBlockApplicationContractsModule),
     typeof(AbpDddApplicationModule),
-    typeof(AbpAutoMapperModule)
+    typeof(AbpLuckyPennyAutoMapperModule)
     )]
 public class BuildingBlockApplicationModule : AbpModule
 {

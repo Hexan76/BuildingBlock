@@ -8,6 +8,7 @@ using Volo.Abp.VirtualFileSystem;
 namespace Framework.BuildingBlock.Domain.Shared;
 
 [DependsOn(
+    typeof(LocalizationModule),
     typeof(AbpValidationModule),
     typeof(AbpDddDomainSharedModule),
     typeof(AbpCachingStackExchangeRedisModule)

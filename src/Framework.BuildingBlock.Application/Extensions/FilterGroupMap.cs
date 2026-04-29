@@ -1,5 +1,6 @@
-﻿using Framework.BuildingBlock.Domain;
+using Framework.BuildingBlock.Contracts;
 using Framework.BuildingBlock.Domain.Shared;
+
 using HashtApp.Soft.Client.Utilities;
 
 namespace Framework.BuildingBlock.Application;

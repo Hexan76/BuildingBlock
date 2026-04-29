@@ -1,11 +1,11 @@
-﻿using FastEndpoints.Swagger;
+using FastEndpoints.Swagger;
 using Framework.BuildingBlock.HttpApi;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
 public static class FastEndpointsSwaggerExtensions
 {
-    public static IServiceCollection HashtNSwagDocsPerModule(this IServiceCollection services, params SwaggerModuleOptions[] modules)
+    public static IServiceCollection FrameworkNSwagDocsPerModule(this IServiceCollection services, params SwaggerModuleOptions[] modules)
     {
         foreach (var module in modules)
         {

@@ -15,6 +15,7 @@
 	  <EmbeddedResource Include="Localization\Resources\fa-IR.json" />
 	</ItemGroup>
 	<ItemGroup>
+	  <PackageReference Include="Volo.Abp.BackgroundJobs.Domain.Shared" />
 	  <ProjectReference Include="..\..\Localization\Framework.Localization.csproj" />
 	</ItemGroup>
 

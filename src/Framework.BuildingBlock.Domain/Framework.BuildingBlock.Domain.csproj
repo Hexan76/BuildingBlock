@@ -10,6 +10,7 @@
         <PackageReference Include="Volo.Abp.Ddd.Domain" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\Framework.BuildingBlock.Domain.Shared\Framework.BuildingBlock.Domain.Shared.csproj" />
+        <PackageReference Include="Volo.Abp.BackgroundJobs.Domain" />
+        <ProjectReference Include="..\Framework.BuildingBlock.Domain.Shared\Framework.BuildingBlock.Domain.Shared.csproj" />
     </ItemGroup>
 </Project>
