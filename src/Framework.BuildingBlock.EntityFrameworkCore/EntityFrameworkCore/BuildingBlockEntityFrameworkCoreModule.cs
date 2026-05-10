@@ -14,13 +14,13 @@ public class BuildingBlockEntityFrameworkCoreModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
-        context.Services.AddAbpDbContext<BuildingBlockDbContext>(options =>
-        {
-            options.AddDefaultRepositories(includeAllEntities: true);
+        //context.Services.AddAbpDbContext<BuildingBlockDbContext>(options =>
+        //{
+        //    options.AddDefaultRepositories(includeAllEntities: true);
 
-            /* Add custom repositories here. Example:
-            * options.AddRepository<Question, EfCoreQuestionRepository>();
-            */
-        });
+        //    /* Add custom repositories here. Example:
+        //    * options.AddRepository<Question, EfCoreQuestionRepository>();
+        //    */
+        //});
     }
 }

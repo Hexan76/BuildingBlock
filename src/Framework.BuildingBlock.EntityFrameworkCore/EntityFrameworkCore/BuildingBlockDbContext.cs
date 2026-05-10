@@ -1,33 +1,39 @@
-using Framework.BuildingBlock.Domain;
 using Microsoft.EntityFrameworkCore;
 
-using Volo.Abp.Data;
 using Volo.Abp.EntityFrameworkCore;
 
 namespace Framework.BuildingBlock.EntityFrameworkCore;
 
-[ConnectionStringName(BuildingBlockDbProperties.ConnectionStringName)]
-public class BuildingBlockDbContext : AbpDbContext<BuildingBlockDbContext>, IBuildingBlockDbContext
+public abstract class GenericDbContextWrapper<TDbContext>
+    : AbpDbContext<TDbContext>
+    where TDbContext : DbContext
 {
-    /* Add DbSet for each Aggregate Root here. Example:
-     * public DbSet<Question> Questions { get; set; }
-     */
-
-    public BuildingBlockDbContext(DbContextOptions<BuildingBlockDbContext> options)
+    protected GenericDbContextWrapper(DbContextOptions<TDbContext> options)
         : base(options)
     {
-
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseLazyLoadingProxies()
-        ;
+        base.OnConfiguring(optionsBuilder);
+
+        ConfigureFramework(optionsBuilder);
     }
+
+    protected virtual void ConfigureFramework(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseLazyLoadingProxies();
+    }
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
 
-        builder.ConfigureBuildingBlock();
+        ConfigureFrameworkModels(builder);
+    }
+
+    protected virtual void ConfigureFrameworkModels(ModelBuilder builder)
+    {
+
     }
 }

@@ -5,7 +5,7 @@
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="AutoMapper.Collection" />
+        <!--<PackageReference Include="AutoMapper.Collection" />-->
         <PackageReference Include="MiniExcel" />
         <PackageReference Include="Volo.Abp.Ddd.Domain" />
     </ItemGroup>

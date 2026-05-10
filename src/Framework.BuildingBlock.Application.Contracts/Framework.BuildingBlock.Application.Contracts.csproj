@@ -5,14 +5,13 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="FluentValidation" />
+        <PackageReference Include="MassTransit.Abstractions" />
         <PackageReference Include="MediatR" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
         <PackageReference Include="Volo.Abp.Ddd.Application.Contracts" />
         <PackageReference Include="Volo.Abp.Authorization" />
     </ItemGroup>
-    <ItemGroup>
-        <PackageReference Include="MassTransit" />
-    </ItemGroup>
+    
     <ItemGroup>
       <ProjectReference Include="..\Framework.BuildingBlock.Domain.Shared\Framework.BuildingBlock.Domain.Shared.csproj" />
     </ItemGroup>

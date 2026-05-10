@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
         <RootNamespace>Framework.BuildingBlock</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="MediatR" />
+        <PackageReference Include="MassTransit" />
         <PackageReference Include="Volo.Abp.LuckyPenny.AutoMapper" />
         <PackageReference Include="Volo.Abp.Ddd.Application" />
         <ProjectReference Include="..\Framework.BuildingBlock.Application.Contracts\Framework.BuildingBlock.Application.Contracts.csproj" />
