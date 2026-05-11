@@ -1,6 +1,8 @@
 using Framework.BuildingBlock.Application.Contracts;
 using Framework.BuildingBlock.Domain;
 using Framework.Localization;
+using Framework.Security;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Localization;
@@ -14,6 +16,7 @@ namespace Framework.BuildingBlock.Application;
     typeof(BuildingBlockDomainModule),
     typeof(BuildingBlockApplicationContractsModule),
     typeof(AbpDddApplicationModule),
+    typeof(FrameworkSecurityModule),
     typeof(AbpLuckyPennyAutoMapperModule)
     )]
 public class BuildingBlockApplicationModule : AbpModule

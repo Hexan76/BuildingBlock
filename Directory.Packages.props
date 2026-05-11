@@ -32,9 +32,13 @@
     <PackageVersion Include="OpenIddict.AspNetCore" Version="7.5.0" />
     <PackageVersion Include="OpenIddict.EntityFrameworkCore" Version="7.5.0" />
     <PackageVersion Include="System.Text.Json" Version="$(MicrosoftVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="$(MicrosoftVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.Abstractions" Version="$(MicrosoftVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="$(MicrosoftVersion)" />
     <!-- /////////////////////////////////////////////////////////////////////// -->
     <PackageVersion Include="Volo.Abp.Caching.StackExchangeRedis" Version="$(AbpVersion)" />
-    <PackageVersion Include="Volo.Abp.Core" Version="10.3.0" />
+    <PackageVersion Include="Volo.Abp.Core" Version="$(AbpVersion)" />
+    <PackageVersion Include="Volo.Abp.Caching" Version="$(AbpVersion)" />
     <PackageVersion Include="Volo.Abp.Ddd.Domain.Shared" Version="$(AbpVersion)" />
     <PackageVersion Include="Volo.Abp.Validation" Version="$(AbpVersion)" />
     <PackageVersion Include="Volo.Abp.Ddd.Domain" Version="$(AbpVersion)" />
