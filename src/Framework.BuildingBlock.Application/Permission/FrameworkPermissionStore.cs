@@ -5,13 +5,10 @@ using Microsoft.Extensions.Logging;
 using Volo.Abp;
 using Volo.Abp.Authorization.Permissions;
 using Volo.Abp.Caching;
-using Volo.Abp.DependencyInjection;
 
 namespace Framework.BuildingBlock.Permission;
 
-[Dependency(ReplaceServices = true)]
-[ExposeServices(typeof(IPermissionStore))]
-public class FrameworkPermissionStore : IPermissionStore, ITransientDependency
+public class FrameworkPermissionStore : IPermissionStore
 {
     public ILogger<FrameworkPermissionStore> Logger { get; set; }
     protected IDistributedCache<PermissionGrantCacheItem> Cache { get; }

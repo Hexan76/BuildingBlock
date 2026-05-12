@@ -16,6 +16,7 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <PackageReference Include="Volo.Abp.BackgroundJobs.Domain.Shared" />
+	  <ProjectReference Include="..\..\Framework.Security.Abstraction\Framework.Security.Abstraction.csproj" />
 	  <ProjectReference Include="..\..\Localization\Framework.Localization.csproj" />
 	</ItemGroup>
 

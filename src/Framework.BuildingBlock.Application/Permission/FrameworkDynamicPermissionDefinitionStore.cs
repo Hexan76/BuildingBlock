@@ -1,36 +1,86 @@
 using Volo.Abp.Authorization.Permissions;
 using Volo.Abp.DependencyInjection;
+using Volo.Abp.Localization;
 
-namespace Framework.BuildingBlock.Permission;
+using Framework.Security;
 
+namespace Framework.BuildingBlock.Permissions;
 
-[Dependency(ReplaceServices = true)]
-//[ExposeServices(typeof(IDynamicPermissionDefinitionStore))]
-public class MyDynamicPermissionDefinitionStore : IDynamicPermissionDefinitionStore, ITransientDependency
+[Dependency(ReplaceServices = false, TryRegister = false)]
+public class FrameworkDynamicPermissionDefinitionStore : IDynamicPermissionDefinitionStore
 {
+    protected IPermissionClient PermissionClient { get; }
 
-    public Task<IReadOnlyList<PermissionGroupDefinition>> GetGroupsAsync()
+    public FrameworkDynamicPermissionDefinitionStore(IPermissionClient permissionClient)
     {
-        throw new System.NotImplementedException();
+        PermissionClient = permissionClient;
     }
 
-    public Task<PermissionDefinition?> GetOrNullAsync(string name)
+    public async Task<PermissionDefinition?> GetOrNullAsync(string name)
     {
-        throw new System.NotImplementedException();
+        var all = await GetPermissionsAsync();
+        return all.FirstOrDefault(x => x.Name == name);
     }
 
-    public Task<IReadOnlyList<PermissionDefinition>> GetPermissionsAsync()
+    public async Task<IReadOnlyList<PermissionDefinition>> GetPermissionsAsync()
     {
-        throw new System.NotImplementedException();
+        var remote = await PermissionClient.GetDefinitionsAsync();
+
+        if (remote == null || remote.Count == 0)
+        {
+            return Array.Empty<PermissionDefinition>();
+        }
+
+        var context = new PermissionDefinitionContext(null);
+
+        foreach (var item in remote)
+        {
+            var group = context.GetGroupOrNull(item.GroupName ?? "Default")
+                        ?? context.AddGroup(
+                            item.GroupName ?? "Default",
+                            new FixedLocalizableString(item.GroupName ?? "Default"));
+
+            group.AddPermission(
+                item.Name,
+                new FixedLocalizableString(item.DisplayName ?? item.Name),
+                isEnabled: item.IsEnabled);
+        }
+
+        return context.ResourcePermissions;
     }
 
-    public Task<PermissionDefinition?> GetResourcePermissionOrNullAsync(string resourceName, string name)
+    public async Task<IReadOnlyList<PermissionGroupDefinition>> GetGroupsAsync()
     {
-        throw new System.NotImplementedException();
+        var context = new PermissionDefinitionContext(null);
+
+        var remote = await PermissionClient.GetDefinitionsAsync();
+
+        if (remote == null || remote.Count == 0)
+        {
+            return Array.Empty<PermissionGroupDefinition>();
+        }
+
+        foreach (var item in remote)
+        {
+            var group = context.GetGroupOrNull(item.GroupName ?? "Default")
+                        ?? context.AddGroup(
+                            item.GroupName ?? "Default",
+                            new FixedLocalizableString(item.GroupName ?? "Default"));
+
+            group.AddPermission(
+                item.Name,
+                new FixedLocalizableString(item.DisplayName ?? item.Name),
+                isEnabled: item.IsEnabled);
+        }
+
+        return context.Groups.Values.ToList();
     }
 
-    public Task<IReadOnlyList<PermissionDefinition>> GetResourcePermissionsAsync()
-    {
-        throw new System.NotImplementedException();
-    }
+    public async Task<IReadOnlyList<PermissionDefinition>> GetResourcePermissionsAsync()
+        => await GetPermissionsAsync();
+
+    public async Task<PermissionDefinition?> GetResourcePermissionOrNullAsync(
+        string resourceName,
+        string name)
+        => await GetOrNullAsync(name);
 }

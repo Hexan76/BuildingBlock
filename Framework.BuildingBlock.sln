@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.3.11512.155 d18.3
+VisualStudioVersion = 18.3.11512.155
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Framework.BuildingBlock.Domain", "src\Framework.BuildingBlock.Domain\Framework.BuildingBlock.Domain.csproj", "{F2840BC7-0188-4606-9126-DADD0F5ABF7A}"
 EndProject
@@ -30,6 +30,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.Localization", "Localization\Framework.Localization.csproj", "{309CA061-0789-A5B5-4306-18AB36113FE2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.BuildingBlock.Domain.Shared", "src\Framework.BuildingBlock.Domain.Shared\Framework.BuildingBlock.Domain.Shared.csproj", "{91AFA51C-0641-B2B6-1DCE-50B82C39B674}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Security", "Security", "{7BE2EFE5-794A-40A5-A4AD-1E02A80432E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.Security.Abstraction", "Framework.Security.Abstraction\Framework.Security.Abstraction.csproj", "{A413CE67-63EC-E578-3E7D-67C9349870C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.Security", "Framework.Security\Framework.Security.csproj", "{5E707F34-3E3D-CE21-CB00-385316C9DF1C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Permission", "Permission", "{57B65853-27F0-4B85-A9AD-7EC4C743FEE1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -81,6 +89,14 @@ Global
 		{91AFA51C-0641-B2B6-1DCE-50B82C39B674}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91AFA51C-0641-B2B6-1DCE-50B82C39B674}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91AFA51C-0641-B2B6-1DCE-50B82C39B674}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A413CE67-63EC-E578-3E7D-67C9349870C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A413CE67-63EC-E578-3E7D-67C9349870C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A413CE67-63EC-E578-3E7D-67C9349870C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A413CE67-63EC-E578-3E7D-67C9349870C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E707F34-3E3D-CE21-CB00-385316C9DF1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E707F34-3E3D-CE21-CB00-385316C9DF1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E707F34-3E3D-CE21-CB00-385316C9DF1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E707F34-3E3D-CE21-CB00-385316C9DF1C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,6 +113,8 @@ Global
 		{90CB5DC4-C040-45C7-8900-9688B26405BC} = {CCD2960C-23CC-4AB4-B84D-60C7AAA52F4D}
 		{309CA061-0789-A5B5-4306-18AB36113FE2} = {990877EE-8182-4F36-9979-41CCA53B6756}
 		{91AFA51C-0641-B2B6-1DCE-50B82C39B674} = {649A3FFA-182F-4E56-9717-E6A9A2BEC545}
+		{A413CE67-63EC-E578-3E7D-67C9349870C4} = {7BE2EFE5-794A-40A5-A4AD-1E02A80432E6}
+		{5E707F34-3E3D-CE21-CB00-385316C9DF1C} = {7BE2EFE5-794A-40A5-A4AD-1E02A80432E6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4324B3B4-B60B-4E3C-91D8-59576B4E26DD}

@@ -1,6 +1,8 @@
-﻿using Framework.BuildingBlock.Domain.Shared;
+using Framework.BuildingBlock.Domain.Shared;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+
+using System.Collections;
 using System.Reflection;
 using Volo.Abp.Authorization;
 using Volo.Abp.Authorization.Permissions;
@@ -13,11 +15,11 @@ public static class PermissionExtensions
     /// Retrieves all permissions defined in the assembly that have the HashtPermissionAttribute.
     /// </summary>
     /// <param name="assembly">The assembly to scan for permissions.</param>
-    /// <returns>A list of HashtPermissionModel containing group names and permissions.</returns>
+    /// <returns>A list of PermissionModel containing group names and permissions.</returns>
     /// <exception cref="ArgumentNullException">Thrown if the assembly is null.</exception>
-    public static List<FrameworkPermissionModel> GetHashtPermissions(this Assembly assembly, string GroupName)
+    public static List<FrameworkPermissionModel> GetDefinitionPermissions(this Assembly assembly, string GroupName)
     {
-        var result = new List<FrameworkPermissionModel>();
+        var result = new HashSet<FrameworkPermissionModel>();
 
         var typesWithAttribute = assembly.GetTypes()
             .Where(t => t.IsClass && t.GetCustomAttribute<FrameworkPermissionAttribute>() is not null);
@@ -39,18 +41,18 @@ public static class PermissionExtensions
             });
         }
 
-        return result;
+        return result.ToList();
     }
 
 
-    public static void SeedHashtPermissions(
+    public static void SeedDefinitionPermissions(
         this PermissionGroupDefinition group,
         Assembly assembly,
         Func<string, PlainLocalizableString>? localizer = null)
     {
         localizer ??= name => PlainLocalizableString.Create(name);
 
-        var permissionGroups = assembly.GetHashtPermissions(group.Name);
+        var permissionGroups = assembly.GetDefinitionPermissions(group.Name);
 
         foreach (var model in permissionGroups)
         {
@@ -62,9 +64,26 @@ public static class PermissionExtensions
             }
         }
     }
+    public static void SeedDefinitionPermissions(
+        this PermissionGroupDefinition group,
+        ICollection<FrameworkPermissionModel> permissions,
+        Func<string, PlainLocalizableString>? localizer = null)
+    {
+        localizer ??= name => PlainLocalizableString.Create(name);
+
+        foreach (var model in permissions)
+        {
+            var childPermission = group.AddPermission(model.Group, localizer(model.Group));
+
+            foreach (var permission in model.Permissions.Distinct())
+            {
+                childPermission.AddChild(permission, localizer(permission));
+            }
+        }
+    }
 
 
-    public static void AddHashtPermissionPolicies(
+    public static void AddDefinitionPermissionPolicies(
         this AuthorizationOptions options,
         IEnumerable<FrameworkPermissionModel> permissions,
         string[] authenticationSchemes = null!)
@@ -73,7 +92,6 @@ public static class PermissionExtensions
 
         foreach (var permission in permissions.DistinctBy(p => p.Group))
         {
-            // Register parent group policy (e.g. "Tax.ColorPallete")
             options.AddPolicy(permission.Group, policy =>
             {
                 policy.RequireAuthenticatedUser();
@@ -81,7 +99,6 @@ public static class PermissionExtensions
                 policy.AddAuthenticationSchemes(schemes);
             });
 
-            // Register individual permission policies (e.g. "Tax.ColorPallete.Create")
             foreach (var action in permission.Permissions.Distinct())
             {
                 options.AddPolicy(action, policy =>
