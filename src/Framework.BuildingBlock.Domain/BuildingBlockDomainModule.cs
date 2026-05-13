@@ -1,4 +1,4 @@
-﻿using Framework.BuildingBlock.Domain.Shared;
+using Framework.BuildingBlock.Domain.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.Domain;
 using Volo.Abp.Modularity;

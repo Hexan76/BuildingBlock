@@ -1,4 +1,4 @@
-﻿using Framework.BuildingBlock.Domain.Shared;
+using Framework.BuildingBlock.Domain.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.Application;
 using Volo.Abp.Authorization;
@@ -16,5 +16,6 @@ public class BuildingBlockApplicationContractsModule : AbpModule
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         context.Services.AddSingleton<IRemoteDispatcher, RemoteDispatcher>();
+
     }
 }

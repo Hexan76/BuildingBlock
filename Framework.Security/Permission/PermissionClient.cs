@@ -1,14 +1,21 @@
 using System.Net.Http.Json;
 
+using Microsoft.Extensions.Configuration;
+
+using Volo.Abp.DependencyInjection;
+
 namespace Framework.Security;
 
-public class PermissionClient : IPermissionClient
+public class PermissionClient : IPermissionClient , ITransientDependency
 {
     private readonly HttpClient _httpClient;
 
-    public PermissionClient(HttpClient httpClient)
+    private string BaseUrl;
+
+    public PermissionClient(HttpClient httpClient, IConfiguration configuration)
     {
         _httpClient = httpClient;
+        BaseUrl = configuration["PermissionService:BaseUrl"];
     }
 
     public async Task<List<string>> GetGrantedPermissionsAsync(
@@ -35,6 +42,38 @@ public class PermissionClient : IPermissionClient
         }
     }
 
+    public async Task<object> SyncDefinitions(
+        string serviceName,
+        string payload,
+        string signature,
+        CancellationToken cancellationToken = default)
+    {
+        var url = $"{BaseUrl}/api/permission-management/sync";
+
+        var request = new DefinitionPermissionsCreate
+        {
+            ServiceName = serviceName,
+            Payload = payload,
+            Signature = signature
+        };
+
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync(
+                url,
+                request,
+                cancellationToken);
+
+            response.EnsureSuccessStatusCode();
+
+            return response.Content;
+        }
+        catch (HttpRequestException)
+        {
+            throw;
+        }
+    }
+
     public async Task<List<PermissionDefinitionDto>> GetDefinitionsAsync(
         CancellationToken cancellationToken = default)
     {
@@ -54,4 +93,12 @@ public class PermissionClient : IPermissionClient
             return new List<PermissionDefinitionDto>();
         }
     }
+
+}
+
+public class DefinitionPermissionsCreate
+{
+    public string ServiceName { get; set; } = default!;
+    public string Payload { get; set; } = default!;
+    public string Signature { get; set; } = default!;
 }

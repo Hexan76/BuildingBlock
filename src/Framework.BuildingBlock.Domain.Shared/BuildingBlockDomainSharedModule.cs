@@ -2,6 +2,7 @@ using Framework.Localization;
 using Volo.Abp.Caching.StackExchangeRedis;
 using Volo.Abp.Domain;
 using Volo.Abp.Modularity;
+using Volo.Abp.Security;
 using Volo.Abp.Validation;
 using Volo.Abp.VirtualFileSystem;
 
@@ -11,6 +12,7 @@ namespace Framework.BuildingBlock.Domain.Shared;
     typeof(LocalizationModule),
     typeof(AbpValidationModule),
     typeof(AbpDddDomainSharedModule),
+    typeof(AbpSecurityModule),
     typeof(AbpCachingStackExchangeRedisModule)
 )]
 public class BuildingBlockDomainSharedModule : AbpModule
