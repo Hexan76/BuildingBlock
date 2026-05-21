@@ -1,8 +1,10 @@
+using Volo.Abp.Caching;
 using Volo.Abp.Text.Formatting;
 
 namespace Framework.BuildingBlock.Permission;
 
 [Serializable]
+[CacheName("Volo.Abp.PermissionManagement.PermissionGrant")]
 public class PermissionGrantCacheItem
 {
     private const string CacheKeyFormat = "pn:{0},pk:{1},n:{2}";
