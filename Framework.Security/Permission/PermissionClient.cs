@@ -24,7 +24,7 @@ public class PermissionClient : IPermissionClient , ITransientDependency
         CancellationToken cancellationToken = default)
     {
         var url =
-            $"/api/permissions/granted?providerName={Uri.EscapeDataString(providerName)}&providerKey={Uri.EscapeDataString(providerKey)}";
+            $"/v1/api/permissions/granted?providerName={Uri.EscapeDataString(providerName)}&providerKey={Uri.EscapeDataString(providerKey)}";
 
         try
         {
@@ -48,7 +48,7 @@ public class PermissionClient : IPermissionClient , ITransientDependency
         string signature,
         CancellationToken cancellationToken = default)
     {
-        var url = $"{BaseUrl}/api/permission-management/sync";
+        var url = $"{BaseUrl}/v1/api/permission-management/sync";
 
         var request = new DefinitionPermissionsCreate
         {
