@@ -1,0 +1,12 @@
+﻿{
+  "Errors": {
+    "Concurrency": "The record was modified by another user. Please refresh and try again.",
+    "ForeignKey": "This record cannot be deleted because it is referenced by other data.",
+    "Duplicate": "A record with the same information already exists.",
+    "Deadlock": "A database concurrency conflict occurred. Please try again.",
+    "DbUpdate": "An error occurred while saving changes.",
+    "SqlGeneric": "A database error occurred.",
+    "Unexpected": "An unexpected error occurred.",
+    "EntityNotFound": "Entity Not Found!"
+  }
+}

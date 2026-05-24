@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <RootNamespace>Framework.BuildingBlock</RootNamespace>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Data.SqlClient" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" />
+        <PackageReference Include="Volo.Abp.EntityFrameworkCore" />
+        <PackageReference Include="Volo.Abp.BackgroundJobs.EntityFrameworkCore" />
+        <ProjectReference Include="..\Framework.BuildingBlock.Domain\Framework.BuildingBlock.Domain.csproj" />
+    </ItemGroup>
+</Project>

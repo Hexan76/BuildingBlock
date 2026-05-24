@@ -1,0 +1,10 @@
+﻿{
+  "Home": {
+    "Welcome": "Welcome to the application!",
+    "Description": "This is a sample localized description."
+  },
+  "User": {
+    "Greeting": "Hello, {0}!",
+    "Logout": "You have been logged out successfully."
+  }
+}
