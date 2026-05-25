@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <RootNamespace>Framework.BuildingBlock</RootNamespace>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    </PropertyGroup>
+    <ItemGroup>
+        <!--<PackageReference Include="AutoMapper.Collection" />-->
+        <PackageReference Include="MiniExcel" />
+        <PackageReference Include="Volo.Abp.Ddd.Domain" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\Framework.Security\Framework.Security.csproj" />
+        <PackageReference Include="Volo.Abp.BackgroundJobs.Domain" />
+        <ProjectReference Include="..\Framework.BuildingBlock.Domain.Shared\Framework.BuildingBlock.Domain.Shared.csproj" />
+    </ItemGroup>
+</Project>

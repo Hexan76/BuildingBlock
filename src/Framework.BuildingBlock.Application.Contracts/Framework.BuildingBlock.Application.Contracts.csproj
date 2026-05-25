@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <RootNamespace>Framework.BuildingBlock</RootNamespace>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="FluentValidation" />
+        <PackageReference Include="MassTransit.Abstractions" />
+        <PackageReference Include="MediatR" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+        <PackageReference Include="Volo.Abp.Ddd.Application.Contracts" />
+        <PackageReference Include="Volo.Abp.Authorization" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\Framework.BuildingBlock.Domain.Shared\Framework.BuildingBlock.Domain.Shared.csproj" />
+    </ItemGroup>
+</Project>
