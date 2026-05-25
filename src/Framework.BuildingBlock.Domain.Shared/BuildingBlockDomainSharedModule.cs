@@ -3,6 +3,7 @@ using Volo.Abp.Caching.StackExchangeRedis;
 using Volo.Abp.Domain;
 using Volo.Abp.Modularity;
 using Volo.Abp.Security;
+using Volo.Abp.Timing;
 using Volo.Abp.Validation;
 using Volo.Abp.VirtualFileSystem;
 
@@ -29,5 +30,9 @@ public class BuildingBlockDomainSharedModule : AbpModule
             options.AddResource<BuildingBlockResource>();
         });
 
+        Configure<AbpClockOptions>(cfg =>
+        {
+            cfg.Kind = DateTimeKind.Utc;
+        });
     }
 }

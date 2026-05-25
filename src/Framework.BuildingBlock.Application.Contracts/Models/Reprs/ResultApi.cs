@@ -3,7 +3,7 @@ namespace Framework.BuildingBlock.Application.Contracts;
 public sealed class ResultApi<TResponseMessage> : MessageContract<TResponseMessage>
 where TResponseMessage : class
 {
-    public bool Success { get; set; }
+    public bool Success { get; set; } = true;
     public TResponseMessage Result { get; set; }
     public Pagination Pagination { get; set; }
     public ErrorDetails? Error { get; set; }
