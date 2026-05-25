@@ -5,7 +5,7 @@ using Volo.Abp.EntityFrameworkCore;
 namespace Framework.BuildingBlock.EntityFrameworkCore;
 
 public abstract class GenericDbContextWrapper<TDbContext>
-    : AbpDbContext<TDbContext>
+    : AbpDbContext<TDbContext>, IEFCoreDbContextFramework
     where TDbContext : DbContext
 {
     protected GenericDbContextWrapper(DbContextOptions<TDbContext> options)
