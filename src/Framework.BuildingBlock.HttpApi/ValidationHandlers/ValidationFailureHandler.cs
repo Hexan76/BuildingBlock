@@ -1,6 +1,9 @@
 using FluentValidation.Results;
+
 using Framework.BuildingBlock.Application.Contracts;
+
 using Microsoft.AspNetCore.Http;
+
 using Volo.Abp.DependencyInjection;
 
 namespace Framework.BuildingBlock.HttpApi;
@@ -9,9 +12,7 @@ public class ValidationFailureHandler : IValidationFailureHandler, ISingletonDep
 {
     public object BuildValidationResponseAsync(IEnumerable<ValidationFailure> failures, HttpContext ctx, int statusCode)
     {
-        return new RejectMessage()
-        {
-            Validations = failures.Select(
+        var validaitons = failures.Select(
                 f => new FrameworkValidation
                 {
                     PropertyName = f.PropertyName,
@@ -20,11 +21,8 @@ public class ValidationFailureHandler : IValidationFailureHandler, ISingletonDep
                     ErrorCode = f.ErrorCode,
                     CustomState = f.CustomState,
                     FormattedMessagePlaceholderValues = f.FormattedMessagePlaceholderValues
-                }).ToList(),
-            Type = MessageType.Validation,
-            Message = "One or more validation errors occurred.",
-            Details = $"TraceId :{ctx.TraceIdentifier}",
-            ErrorsMessage = [$"Request Path : {ctx.Request.Path}"]
-        };
+                }).ToList();
+        return MessageContract.Validation(validaitons,ctx);
+       
     }
 }

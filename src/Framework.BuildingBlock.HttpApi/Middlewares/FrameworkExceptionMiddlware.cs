@@ -70,8 +70,8 @@ public class FrameworkExceptionMiddlware : AbpExceptionHandlingMiddleware, ISing
 
             var rejectMessage = ToRejectedMessage(abpError);
 
-            rejectMessage.Type = MessageType.Error;
-            rejectMessage.ErrorsMessage = exceptionHandlingOptions.SendStackTraceToClients
+            rejectMessage.Type = MessageResultType.Error;
+            rejectMessage.Errors = exceptionHandlingOptions.SendStackTraceToClients
                 ? ex.StackTrace?.Split('\n').Select(l => $"\t{l.Trim()}").ToArray()
                 : null;
 
@@ -92,13 +92,12 @@ public class FrameworkExceptionMiddlware : AbpExceptionHandlingMiddleware, ISing
         return Task.CompletedTask;
     }
 
-    private RejectMessage ToRejectedMessage(RemoteServiceErrorInfo errorInfo)
+    private MessageContract ToRejectedMessage(RemoteServiceErrorInfo errorInfo)
     {
-        var rejected = new RejectMessage();
-        rejected.Message = errorInfo.Message;
-        rejected.Code = errorInfo.Code;
-        rejected.Details = errorInfo.Details;
-        rejected.Type = MessageType.Error;
+        var rejected = new MessageContract();
+        rejected.Messages = [errorInfo.Message, errorInfo.Details];
+        rejected.ApplicationCode = errorInfo.Code;
+        rejected.Type = MessageResultType.Error;
         return rejected;
     }
 }

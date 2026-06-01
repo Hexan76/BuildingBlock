@@ -1,5 +1,8 @@
+using System.Text.Json.Serialization;
+
 namespace Framework.BuildingBlock.Application.Contracts;
 
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum MessageType : byte
 {
     Validation = 0,
