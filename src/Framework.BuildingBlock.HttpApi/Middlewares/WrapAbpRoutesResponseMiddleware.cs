@@ -1,4 +1,4 @@
-﻿using Framework.BuildingBlock.Application.Contracts;
+using Framework.BuildingBlock.Application.Contracts;
 using Microsoft.AspNetCore.Http;
 using System.Text.Json;
 using Volo.Abp.AspNetCore.Middleware;
@@ -37,9 +37,9 @@ public class WrapAbpRoutesResponseMiddleware : AbpMiddlewareBase, ISingletonDepe
                     var successResponse = new AcceptMessage<object>
                     {
 
-                        Message = "Success", // You can modify this message as needed
-                        Type = MessageType.Success, // Set as "Info" for success
-                        Data = JsonSerializer.Deserialize<object>(responseBody) // Wrap actual data
+                        Messages = ["Success"], // You can modify this message as needed
+                        Type = MessageResultType.Message, // Set as "Info" for success
+                        Result = JsonSerializer.Deserialize<object>(responseBody) // Wrap actual data
                     };
 
                     // Reset the response body and write the new response
