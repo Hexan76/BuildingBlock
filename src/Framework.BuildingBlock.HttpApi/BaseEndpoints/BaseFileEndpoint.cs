@@ -12,7 +12,7 @@ public abstract class BaseFileEndpoint<TRequest> : Endpoint<TRequest>
     {
         var result = await Mediator.Send(req, ct);
 
-        var stream = new MemoryStream(result.Data.Content);
-        await Send.StreamAsync(stream, result.Data.FileName, result.Data.Content.Length, result.Data.ContentType);
+        var stream = new MemoryStream(result.Result.Content);
+        await Send.StreamAsync(stream, result.Result.FileName, result.Result.Content.Length, result.Result.ContentType);
     }
 }
