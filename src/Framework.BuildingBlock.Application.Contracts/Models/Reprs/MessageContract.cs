@@ -11,10 +11,11 @@ where TResponseMessage : class
 {
     public TResponseMessage? Result { get; init; }
 
-    public static MessageContract<TResponseMessage> Success(TResponseMessage data)
+    public static ApiResult<TResponseMessage> Success(TResponseMessage data)
     {
-        return new()
+        return new ApiResult<TResponseMessage>()
         {
+            ApplicationCode = "",
             Result = data,
             Errors = null,
             Messages = null
@@ -26,7 +27,7 @@ public class MessageContract
 {
     public MessageContract()
     {
-        
+
     }
     public MessageContract(IEnumerable<FrameworkValidation> validations)
     {
@@ -53,14 +54,34 @@ public class MessageContract
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public IEnumerable<FrameworkValidation>? Validations { get; init; }
 
-    public static MessageContract Validation(IEnumerable<FrameworkValidation> validations,HttpContext httpContext)
+    public static ApiResult Validation(IEnumerable<FrameworkValidation> validations, HttpContext httpContext)
     {
 
-        return new MessageContract(validations)
+        return new ApiResult(validations)
         {
-            Type = MessageResultType.Error,
+            ApplicationCode = "403",
+            Type = MessageResultType.Validation,
             Errors = ["One or more validation errors occurred.", $"Request Path : {httpContext.Request.Path}"],
             InternalStackTrace = $"TraceId :{httpContext.TraceIdentifier}",
         };
     }
+}
+
+//TODO : Handle this because old Requests must be Change NestJs / React and All Services
+public class ApiResult<TResponseMessage> : MessageContract<TResponseMessage>
+    where TResponseMessage : class
+{
+    public bool Success { get; set; } = true;
+}
+public class ApiResult : MessageContract
+{
+    public ApiResult()
+    {
+        
+    }
+    public ApiResult(IEnumerable<FrameworkValidation> validations)
+    {
+        this.Validations = validations;
+    }
+    public bool Success { get; set; } = false;
 }
