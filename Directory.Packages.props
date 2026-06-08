@@ -33,6 +33,7 @@
     <PackageVersion Include="OpenIddict.EntityFrameworkCore" Version="7.5.0" />
     <PackageVersion Include="System.Text.Json" Version="$(MicrosoftVersion)" />
     <PackageVersion Include="Microsoft.Extensions.Http" Version="$(MicrosoftVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="$(MicrosoftVersion)" />
     <PackageVersion Include="Microsoft.Extensions.Caching.Abstractions" Version="$(MicrosoftVersion)" />
     <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="$(MicrosoftVersion)" />
     <!-- /////////////////////////////////////////////////////////////////////// -->

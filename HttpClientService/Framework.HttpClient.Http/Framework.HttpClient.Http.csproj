@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Abstractions\Framework.HttpClient.Abstractions.csproj" />
+    <ProjectReference Include="..\Framework.HttpClient.Abstractions\Framework.HttpClient.Abstractions.csproj" />
   </ItemGroup>
 
   <ItemGroup>
