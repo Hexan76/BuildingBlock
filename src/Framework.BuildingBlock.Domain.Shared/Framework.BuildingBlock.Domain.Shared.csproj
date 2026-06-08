@@ -19,5 +19,8 @@
 	  <ProjectReference Include="..\..\Framework.Security.Abstraction\Framework.Security.Abstraction.csproj" />
 	  <ProjectReference Include="..\..\Localization\Framework.Localization.csproj" />
 	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\..\HttpClientService\Framework.HttpClient.Abstractions\Framework.HttpClient.Abstractions.csproj" />
+	</ItemGroup>
 
 </Project>
