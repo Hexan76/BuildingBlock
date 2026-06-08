@@ -21,6 +21,32 @@ where TResponseMessage : class
             Messages = null
         };
     }
+    public static ApiResult<TResponseMessage> Success(TResponseMessage data, string message, int totalCount, int currentPage)
+    {
+        return new ApiResult<TResponseMessage>()
+        {
+            Pagination = new()
+            {
+                CurrentPage = currentPage,
+                Total = totalCount
+            },
+            Snackbar = new()
+            {
+                Type = MessageContractResultSeverity.Info,
+                Message = message
+            },
+            Error = new()
+            {
+                Code = "",
+                HttpCode = 200,
+                Message = message
+            },
+            ApplicationCode = "",
+            Result = data,
+            Errors = null,
+            Messages = null
+        };
+    }
 }
 
 public class MessageContract
@@ -54,15 +80,26 @@ public class MessageContract
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public IEnumerable<FrameworkValidation>? Validations { get; init; }
 
-    public static ApiResult Validation(IEnumerable<FrameworkValidation> validations, HttpContext httpContext)
+    public static ApiResult Validation(IEnumerable<FrameworkValidation> validations, string applicationCode, HttpContext httpContext)
     {
-
+        string[] errors = ["One or more validation errors occurred.", $"Request Path : {httpContext.Request.Path}"];
         return new ApiResult(validations)
         {
             ApplicationCode = "403",
             Type = MessageResultType.Validation,
-            Errors = ["One or more validation errors occurred.", $"Request Path : {httpContext.Request.Path}"],
+            Errors = errors,
             InternalStackTrace = $"TraceId :{httpContext.TraceIdentifier}",
+            Error = new()
+            {
+                Code = applicationCode,
+                HttpCode = httpContext.Response.StatusCode,
+                Message = string.Join("\n", errors)
+            },
+            Snackbar = new()
+            {
+                Type = MessageContractResultSeverity.Error,
+                Message = string.Join("\n", validations)
+            },
         };
     }
 }
@@ -72,16 +109,42 @@ public class ApiResult<TResponseMessage> : MessageContract<TResponseMessage>
     where TResponseMessage : class
 {
     public bool Success { get; set; } = true;
+    public Pagination Pagination { get; set; }
+    public ErrorDetails? Error { get; set; }
+    public Snackbar? Snackbar { get; set; }
 }
 public class ApiResult : MessageContract
 {
     public ApiResult()
     {
-        
+
     }
     public ApiResult(IEnumerable<FrameworkValidation> validations)
     {
         this.Validations = validations;
     }
     public bool Success { get; set; } = false;
+    public Pagination Pagination { get; set; }
+    public ErrorDetails? Error { get; set; }
+    public Snackbar? Snackbar { get; set; }
+
+}
+
+public class Pagination
+{
+    public int Total { get; set; }
+    public int CurrentPage { get; set; }
+}
+
+public class ErrorDetails
+{
+    public string Code { get; set; }
+    public int HttpCode { get; set; }
+    public string Message { get; set; }
+}
+
+public class Snackbar
+{
+    public MessageContractResultSeverity Type { get; set; }
+    public string Message { get; set; }
 }
