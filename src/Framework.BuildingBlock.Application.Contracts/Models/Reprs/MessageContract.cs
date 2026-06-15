@@ -16,7 +16,7 @@ where TResponseMessage : class
         return new ApiResult<TResponseMessage>()
         {
             ApplicationCode = "",
-            Type = MessageResultType.Message,
+            Type = MessageResultType.Info,
             Result = data,
             Errors = null,
             Messages = null
@@ -43,7 +43,7 @@ where TResponseMessage : class
                 Message = message
             },
             ApplicationCode = "",
-            Type = MessageResultType.Message,
+            Type = MessageResultType.Info,
             Result = data,
             Errors = null,
             Messages = null
@@ -99,13 +99,13 @@ public class MessageContract
     {
         return new ApiResult
         {
-            ApplicationCode = "500",
+            ApplicationCode = applicationCode,
             Type = MessageResultType.Error,
             Severity = MessageContractResultSeverity.Error,
             Errors = errors,
             Error = new()
             {
-                Code = int.Parse(applicationCode),
+                Code = long.Parse(applicationCode),
                 HttpCode = statusCode,
                 Message = string.Join("\n", errors)
             },
@@ -153,7 +153,7 @@ public class Pagination
 
 public class ErrorDetails
 {
-    public int Code { get; set; }
+    public long Code { get; set; }
     public int HttpCode { get; set; }
     public string Message { get; set; }
 }

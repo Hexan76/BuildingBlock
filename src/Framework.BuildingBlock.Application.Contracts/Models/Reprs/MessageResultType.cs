@@ -5,7 +5,8 @@ namespace Framework.BuildingBlock.Application.Contracts
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum MessageResultType
     {
-        Message,
+        Info,
+        Warning,
         Error,
         Validation,
     }

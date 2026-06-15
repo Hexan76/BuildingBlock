@@ -38,7 +38,7 @@ public class WrapAbpRoutesResponseMiddleware : AbpMiddlewareBase, ISingletonDepe
                     {
 
                         Messages = ["Success"], // You can modify this message as needed
-                        Type = MessageResultType.Message, // Set as "Info" for success
+                        Type = MessageResultType.Info, // Set as "Info" for success
                         Result = JsonSerializer.Deserialize<object>(responseBody) // Wrap actual data
                     };
 
