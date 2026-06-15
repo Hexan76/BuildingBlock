@@ -16,6 +16,7 @@ where TResponseMessage : class
         return new ApiResult<TResponseMessage>()
         {
             ApplicationCode = "",
+            Type = MessageResultType.Message,
             Result = data,
             Errors = null,
             Messages = null
@@ -37,11 +38,12 @@ where TResponseMessage : class
             },
             Error = new()
             {
-                Code = "",
+                Code = 200,
                 HttpCode = 200,
                 Message = message
             },
             ApplicationCode = "",
+            Type = MessageResultType.Message,
             Result = data,
             Errors = null,
             Messages = null
@@ -65,17 +67,8 @@ public class MessageContract
     public MessageResultType Type { get; set; }
     public string ApplicationCode { get; set; } = "500";
 
-    [JsonIgnore]
-    internal string? InternalStackTrace { get; init; }
-
-    [JsonIgnore]
-    internal bool IncludeStackTrace { get; init; }
-
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public string? StackTrace
-        => IncludeStackTrace
-            ? InternalStackTrace
-            : null;
+    public string? StackTrace { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public IEnumerable<FrameworkValidation>? Validations { get; init; }
@@ -85,13 +78,13 @@ public class MessageContract
         string[] errors = ["One or more validation errors occurred.", $"Request Path : {httpContext.Request.Path}"];
         return new ApiResult(validations)
         {
-            ApplicationCode = "403",
+            ApplicationCode = "400",
             Type = MessageResultType.Validation,
             Errors = errors,
-            InternalStackTrace = $"TraceId :{httpContext.TraceIdentifier}",
+            StackTrace = $"TraceId :{httpContext.TraceIdentifier}",
             Error = new()
             {
-                Code = applicationCode,
+                Code = int.Parse(applicationCode),
                 HttpCode = httpContext.Response.StatusCode,
                 Message = string.Join("\n", errors)
             },
@@ -100,6 +93,28 @@ public class MessageContract
                 Type = MessageContractResultSeverity.Error,
                 Message = string.Join("\n", validations)
             },
+        };
+    }
+    public static ApiResult ToError(string applicationCode, string[] errors, int statusCode, string stackTrace)
+    {
+        return new ApiResult
+        {
+            ApplicationCode = "500",
+            Type = MessageResultType.Error,
+            Severity = MessageContractResultSeverity.Error,
+            Errors = errors,
+            Error = new()
+            {
+                Code = int.Parse(applicationCode),
+                HttpCode = statusCode,
+                Message = string.Join("\n", errors)
+            },
+            Snackbar = new()
+            {
+                Type = MessageContractResultSeverity.Error,
+                Message = string.Join("\n", errors)
+            },
+            StackTrace = stackTrace,
         };
     }
 }
@@ -138,7 +153,7 @@ public class Pagination
 
 public class ErrorDetails
 {
-    public string Code { get; set; }
+    public int Code { get; set; }
     public int HttpCode { get; set; }
     public string Message { get; set; }
 }

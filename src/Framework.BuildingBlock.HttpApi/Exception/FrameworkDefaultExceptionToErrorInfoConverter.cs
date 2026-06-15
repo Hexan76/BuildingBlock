@@ -63,7 +63,7 @@ public class FrameworkDefaultExceptionToErrorInfoConverter : DefaultExceptionToE
 
 
 
-    private RemoteServiceErrorInfo ToAbpRemoteModel(HashtRemoteErrorInfoDto errorInfoDto)
+    private RemoteServiceErrorInfo ToAbpRemoteModel(FrameworkRemoteErrorInfoDto errorInfoDto)
     {
         return new RemoteServiceErrorInfo(errorInfoDto.Message, errorInfoDto.Details, errorInfoDto.Code, errorInfoDto.Data);
     }

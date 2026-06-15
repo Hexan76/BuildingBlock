@@ -34,7 +34,7 @@ public abstract class EfCoreRepositoryFramework<TDbContext, TEntity, TKey>
     {
     }
 
-    public async Task<PagedResult<TEntity>> PaginationAsync(
+    public virtual async Task<PagedResult<TEntity>> PaginationAsync(
         FilterGroup filterGroup,
         int skip = 0,
         int maxResultCount = 10,
@@ -67,7 +67,7 @@ public abstract class EfCoreRepositoryFramework<TDbContext, TEntity, TKey>
             PageSize = maxResultCount
         };
     }
-    public async Task<PagedResult<TEntity>> PaginationPagingAsync(
+    public virtual async Task<PagedResult<TEntity>> PaginationPagingAsync(
         FilterGroup filterGroup,
         int page = 1,
         int pageSize = 10,

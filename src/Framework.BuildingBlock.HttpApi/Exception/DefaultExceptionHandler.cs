@@ -1,4 +1,4 @@
-﻿using Framework.BuildingBlock.Domain.Shared;
+using Framework.BuildingBlock.Domain.Shared;
 using Volo.Abp.DependencyInjection;
 
 namespace Framework.BuildingBlock.HttpApi;
@@ -9,9 +9,9 @@ public class DefaultExceptionHandler : IHashtExceptionHandler, ITransientDepende
 {
     public bool CanHandle(Exception ex) => true; // fallback
 
-    public HashtRemoteErrorInfoDto Handle(Exception ex, bool SendExceptionsDetailsToClients, bool SendStackTraceToClients)
+    public FrameworkRemoteErrorInfoDto Handle(Exception ex, bool SendExceptionsDetailsToClients, bool SendStackTraceToClients)
     {
-        HashtRemoteErrorInfoDto errorInfoDto = new(ex.Message, ex.InnerException?.Message)
+        FrameworkRemoteErrorInfoDto errorInfoDto = new(ex.Message, ex.InnerException?.Message)
         {
             Details = SendExceptionsDetailsToClients ? ex.ToString() : null,
 

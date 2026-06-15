@@ -1,9 +1,11 @@
 using Framework.BuildingBlock.Application.Contracts;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
+
 using Volo.Abp.AspNetCore.ExceptionHandling;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.DependencyInjection;
@@ -68,14 +70,20 @@ public class FrameworkExceptionMiddlware : AbpExceptionHandlingMiddleware, ISing
                 opts.SendExceptionDataToClientTypes = exceptionHandlingOptions.SendExceptionDataToClientTypes;
             });
 
-            var rejectMessage = ToRejectedMessage(abpError);
 
-            rejectMessage.Type = MessageResultType.Error;
-            rejectMessage.Errors = exceptionHandlingOptions.SendStackTraceToClients
+            //rejectMessage.Type = MessageResultType.Error;
+            //rejectMessage.Errors = exceptionHandlingOptions.SendStackTraceToClients
+            //    ? ex.StackTrace?.Split('\n').Select(l => $"\t{l.Trim()}").ToArray()
+            //    : null;
+
+            var stackTrace = exceptionHandlingOptions.SendStackTraceToClients
                 ? ex.StackTrace?.Split('\n').Select(l => $"\t{l.Trim()}").ToArray()
                 : null;
 
-            await context.Response.WriteAsync(jsonSerializer.Serialize(ToRejectedMessage(abpError)));
+            stackTrace.Append($"TraceId :{context.TraceIdentifier}");
+            var rejectMessage = ToApiResult(abpError, context, string.Join('\n', stackTrace));
+
+            await context.Response.WriteAsync(jsonSerializer.Serialize(rejectMessage));
 
 
         }
@@ -94,10 +102,31 @@ public class FrameworkExceptionMiddlware : AbpExceptionHandlingMiddleware, ISing
 
     private MessageContract ToRejectedMessage(RemoteServiceErrorInfo errorInfo)
     {
-        var rejected = new MessageContract();
-        rejected.Messages = [errorInfo.Message, errorInfo.Details];
-        rejected.ApplicationCode = errorInfo.Code;
-        rejected.Type = MessageResultType.Error;
+        var rejected = new MessageContract
+        {
+            Messages = [errorInfo.Message, errorInfo.Details],
+            ApplicationCode = errorInfo.Code,
+            Type = MessageResultType.Error,
+        };
+        return rejected;
+    }
+    private ApiResult ToApiResult(RemoteServiceErrorInfo errorInfo, HttpContext ctx, string stackTrace)
+    {
+        //var rejected = new ApiResult
+        //{
+        //    Messages = [errorInfo.Message, errorInfo.Details],
+        //    ApplicationCode = errorInfo.Code,
+        //    Type = MessageResultType.Error,
+        //    Error = new()
+        //    {
+        //        Code = int.Parse(errorInfo.Code),
+        //        HttpCode = ctx.Response.StatusCode,
+        //        Message = string.Join(',', [errorInfo.Message, errorInfo.Details])
+        //    },
+        //    Errors = [errorInfo.Message, errorInfo.Details],
+        //    Severity = MessageContractResultSeverity.Error,
+        //};
+        var rejected = MessageContract.ToError(errorInfo.Code, [errorInfo.Message, errorInfo.Details], ctx.Response.StatusCode, stackTrace);
         return rejected;
     }
 }

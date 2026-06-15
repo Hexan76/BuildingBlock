@@ -29,7 +29,7 @@ public class DBExceptionHandler : IHashtExceptionHandler, ITransientDependency
                || ex is SqlException;
     }
 
-    public HashtRemoteErrorInfoDto Handle(
+    public FrameworkRemoteErrorInfoDto Handle(
         Exception ex,
         bool sendExceptionsDetailsToClients,
         bool sendStackTraceToClients)
@@ -79,7 +79,7 @@ public class DBExceptionHandler : IHashtExceptionHandler, ITransientDependency
                || ex is DBConcurrencyException;
     }
 
-    private HashtRemoteErrorInfoDto HandleSqlException(
+    private FrameworkRemoteErrorInfoDto HandleSqlException(
         SqlException sqlException,
         Exception originalException,
         bool sendDetails)
@@ -126,12 +126,12 @@ public class DBExceptionHandler : IHashtExceptionHandler, ITransientDependency
         return null;
     }
 
-    private HashtRemoteErrorInfoDto CreateError(
+    private FrameworkRemoteErrorInfoDto CreateError(
         string message,
         Exception ex,
         bool sendDetails)
     {
-        return new HashtRemoteErrorInfoDto(message, null)
+        return new FrameworkRemoteErrorInfoDto(message, null)
         {
             Details = sendDetails ? ex.ToString() : null
         };

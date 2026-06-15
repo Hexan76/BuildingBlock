@@ -1,8 +1,8 @@
-﻿using System.Collections;
+using System.Collections;
 
 namespace Framework.BuildingBlock.Domain.Shared;
 
-public class HashtRemoteErrorInfoDto
+public class FrameworkRemoteErrorInfoDto
 {
     public string? Code { get; set; }
 
@@ -25,7 +25,7 @@ public class HashtRemoteErrorInfoDto
     /// <summary>
     /// Creates a new instance of <see cref="RemoteServiceErrorInfo"/>.
     /// </summary>
-    public HashtRemoteErrorInfoDto()
+    public FrameworkRemoteErrorInfoDto()
     {
 
     }
@@ -37,7 +37,7 @@ public class HashtRemoteErrorInfoDto
     /// <param name="details">Error details</param>
     /// <param name="message">Error message</param>
     /// <param name="data">Error data</param>
-    public HashtRemoteErrorInfoDto(string message, string? details = null, string? code = null, IDictionary? data = null)
+    public FrameworkRemoteErrorInfoDto(string message, string? details = null, string? code = null, IDictionary? data = null)
     {
         Message = message;
         Details = details;

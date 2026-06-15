@@ -1,4 +1,4 @@
-﻿using Framework.BuildingBlock.Domain.Shared;
+using Framework.BuildingBlock.Domain.Shared;
 using Microsoft.Extensions.Localization;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Authentication;
@@ -27,7 +27,7 @@ public class AuthorizationExceptionHandler : IHashtExceptionHandler, ITransientD
                || ex is SecurityTokenException;
     }
 
-    public HashtRemoteErrorInfoDto Handle(
+    public FrameworkRemoteErrorInfoDto Handle(
         Exception ex,
         bool sendExceptionsDetailsToClients,
         bool sendStackTraceToClients)
@@ -67,13 +67,13 @@ public class AuthorizationExceptionHandler : IHashtExceptionHandler, ITransientD
                || ex is UnauthorizedAccessException;
     }
 
-    private static HashtRemoteErrorInfoDto CreateError(
+    private static FrameworkRemoteErrorInfoDto CreateError(
         string message,
         string code,
         Exception ex,
         bool sendDetails)
     {
-        return new HashtRemoteErrorInfoDto(message, code)
+        return new FrameworkRemoteErrorInfoDto(message, code)
         {
             Details = sendDetails ? ex.ToString() : null
         };

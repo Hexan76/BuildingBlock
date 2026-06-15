@@ -1,4 +1,4 @@
-﻿using Framework.BuildingBlock.Domain.Shared;
+using Framework.BuildingBlock.Domain.Shared;
 using Microsoft.Extensions.Localization;
 using Volo.Abp;
 using Volo.Abp.DependencyInjection;
@@ -20,7 +20,7 @@ public class LogicalExceptionsHandler : IHashtExceptionHandler, ITransientDepend
         return ex is UserFriendlyException || ex is BusinessException;
     }
 
-    public HashtRemoteErrorInfoDto Handle(
+    public FrameworkRemoteErrorInfoDto Handle(
         Exception ex,
         bool sendExceptionsDetailsToClients,
         bool sendStackTraceToClients)
@@ -45,13 +45,13 @@ public class LogicalExceptionsHandler : IHashtExceptionHandler, ITransientDepend
 
     // ---------------- Private ----------------
 
-    private static HashtRemoteErrorInfoDto CreateError(
+    private static FrameworkRemoteErrorInfoDto CreateError(
         string message,
         string code,
         Exception ex,
         bool sendDetails)
     {
-        return new HashtRemoteErrorInfoDto(message, code)
+        return new FrameworkRemoteErrorInfoDto(message, code)
         {
             Details = sendDetails
                 ? ex.StackTrace

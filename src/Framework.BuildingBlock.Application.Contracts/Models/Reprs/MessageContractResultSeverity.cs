@@ -1,9 +1,11 @@
-namespace Framework.BuildingBlock.Application.Contracts
+using System.Text.Json.Serialization;
+
+namespace Framework.BuildingBlock.Application.Contracts;
+
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum MessageContractResultSeverity
 {
-    public enum MessageContractResultSeverity
-    {
-        Info,
-        Warning,
-        Error
-    }
+    Info,
+    Warning,
+    Error
 }
