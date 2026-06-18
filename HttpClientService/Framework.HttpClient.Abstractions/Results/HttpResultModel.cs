@@ -1,45 +1,58 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
-namespace Framework.HttpClient.Abstractions
+namespace Framework.HttpClient.Abstractions;
+
+public class HttpResultModel
 {
 
-    public class HttpResultModel
+    public string[]? Errors { get; set; }
+    public string[]? Messages { get; set; }
+    public HttpResultSeverity Severity { get; set; }
+    public HttpResultType Type { get; set; }
+    public string ApplicationCode { get; set; } = "500";
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? StackTrace { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IEnumerable<HttpValidationResultItem>? Validations { get; init; }
+
+
+    public bool Success { get; set; } = false;
+    public Pagination Pagination { get; set; }
+    public ErrorDetails? Error { get; set; }
+    public Snackbar? Snackbar { get; set; }
+
+}
+public class HttpResultModel<T> : HttpResultModel
+{
+    public T? Result { get; init; }
+
+    public static HttpResultModel<T> Success(T data)
     {
-        public string[]? Errors { get; init; }
-        public string[]? Messages { get; init; }
-        public HttpResultSeverity Severity { get; init; }
-        public HttpResultType Type { get; init; }
-        public string ApplicationCode { get; init; } = "500";
-
-        [JsonIgnore]
-        internal string? InternalStackTrace { get; init; }
-
-        [JsonIgnore]
-        internal bool IncludeStackTrace { get; init; }
-
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public string? StackTrace
-            => IncludeStackTrace
-                ? InternalStackTrace
-                : null;
-
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public IEnumerable<HttpValidationResultItem>? Validations { get; init; }
-
-    }
-    public class HttpResultModel<T> : HttpResultModel
-    {
-        public T? Result { get; init; }
-
-        public static HttpResultModel<T> Success(T data)
+        return new()
         {
-            return new()
-            {
-                Result = data,
-                Errors = null,
-                Messages = null
-            };
-        }
+            Result = data,
+            Errors = null,
+            Messages = null
+        };
     }
+}
+public class Pagination
+{
+    public int Total { get; set; }
+    public int CurrentPage { get; set; }
+}
 
+public class ErrorDetails
+{
+    public long Code { get; set; }
+    public int HttpCode { get; set; }
+    public string Message { get; set; }
+}
+
+public class Snackbar
+{
+    public HttpResultType Type { get; set; }
+    public string Message { get; set; }
 }

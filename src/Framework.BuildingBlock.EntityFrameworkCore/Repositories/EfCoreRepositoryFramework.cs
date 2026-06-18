@@ -36,11 +36,12 @@ public abstract class EfCoreRepositoryFramework<TDbContext, TEntity, TKey>
 
     public virtual async Task<PagedResult<TEntity>> PaginationAsync(
         FilterGroup filterGroup,
+        IQueryable<TEntity> externalQuery,
         int skip = 0,
         int maxResultCount = 10,
         string sort = "")
     {
-        var query = (await GetQueryableAsync())
+        var query = externalQuery ?? (await GetQueryableAsync())
             .ApplyFilter(filterGroup)
             .ApplySort(sort);
 
@@ -69,6 +70,7 @@ public abstract class EfCoreRepositoryFramework<TDbContext, TEntity, TKey>
     }
     public virtual async Task<PagedResult<TEntity>> PaginationPagingAsync(
         FilterGroup filterGroup,
+        IQueryable<TEntity> externalQuery,
         int page = 1,
         int pageSize = 10,
         string sort = "")
@@ -76,7 +78,7 @@ public abstract class EfCoreRepositoryFramework<TDbContext, TEntity, TKey>
         page = page <= 0 ? 1 : page;
         pageSize = pageSize <= 0 ? 10 : pageSize;
 
-        var query = (await GetQueryableAsync())
+        var query = externalQuery ?? (await GetQueryableAsync())
             .ApplyFilter(filterGroup)
             .ApplySort(sort);
 
