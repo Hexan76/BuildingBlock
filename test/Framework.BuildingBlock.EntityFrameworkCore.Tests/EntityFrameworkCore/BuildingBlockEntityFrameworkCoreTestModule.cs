@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.Sqlite;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -36,9 +36,9 @@ public class BuildingBlockEntityFrameworkCoreTestModule : AbpModule
         var connection = new SqliteConnection("Data Source=:memory:");
         connection.Open();
 
-        new BuildingBlockDbContext(
-            new DbContextOptionsBuilder<BuildingBlockDbContext>().UseSqlite(connection).Options
-        ).GetService<IRelationalDatabaseCreator>().CreateTables();
+        //new BuildingBlockDbContext(
+        //    new DbContextOptionsBuilder<BuildingBlockDbContext>().UseSqlite(connection).Options
+        //).GetService<IRelationalDatabaseCreator>().CreateTables();
 
         return connection;
     }

@@ -1,4 +1,6 @@
-﻿using Volo.Abp.Modularity;
+using Framework.BuildingBlock.Domain;
+
+using Volo.Abp.Modularity;
 
 namespace Framework.BuildingBlock;
 
