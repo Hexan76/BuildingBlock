@@ -6,7 +6,7 @@ public interface IFrameworkRequest : IRequest
 {
 }
 
-public interface IFrameworkRequest<TResponse> : IRequest<ApiResult<TResponse>>
+public interface IFrameworkRequest<TResponse> : IRequest<MessageContract<TResponse>>
     where TResponse : class
 {
 }
