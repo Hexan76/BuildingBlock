@@ -1,5 +1,7 @@
 using System.Net;
 
+using Framework.BuildingBlock.Domain.Shared.Exceptions;
+
 using Microsoft.AspNetCore.Http;
 
 using Volo.Abp;
@@ -20,10 +22,15 @@ public class FrameworkHttpExceptionStatusCodeFinder : IHttpExceptionStatusCodeFi
 
             EntityNotFoundException => HttpStatusCode.BadRequest,
 
+            ResourceNotFoundException => HttpStatusCode.NotFound,
+
+            InsufficientStockException => HttpStatusCode.BadRequest,
+
+            ConcurrencyConflictException => HttpStatusCode.Conflict,
+
             IUserFriendlyException => HttpStatusCode.UnprocessableContent,
 
             IBusinessException => HttpStatusCode.UnprocessableContent,
-
 
             AbpAuthorizationException => httpContext.User.Identity?.IsAuthenticated == true
                 ? HttpStatusCode.Forbidden

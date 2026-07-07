@@ -2,5 +2,7 @@
 
 public static class BuildingBlockErrorCodes
 {
-    //Add your business exception error codes here...
+    public const string ResourceNotFound = "ResourceNotFound";
+    public const string InsufficientStock = "InsufficientStock";
+    public const string ConcurrencyConflict = "ConcurrencyConflict";
 }
