@@ -37,8 +37,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.Security.Abstract
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.Security", "Framework.Security\Framework.Security.csproj", "{5E707F34-3E3D-CE21-CB00-385316C9DF1C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Permission", "Permission", "{57B65853-27F0-4B85-A9AD-7EC4C743FEE1}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HttpClientService", "HttpClientService", "{326B07F6-F128-4D95-8320-C6B4FAB88042}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Framework.HttpClient.Abstractions", "HttpClientService\Framework.HttpClient.Abstractions\Framework.HttpClient.Abstractions.csproj", "{B9038AB0-2CFF-4026-8158-D496D3045427}"
