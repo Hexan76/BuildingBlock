@@ -1,0 +1,32 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/HttpClientService/">
+    <Project Path="HttpClientService/Framework.HttpClient.Abstractions/Framework.HttpClient.Abstractions.csproj" />
+    <Project Path="HttpClientService/Framework.HttpClient.Http/Framework.HttpClient.Http.csproj" />
+  </Folder>
+  <Folder Name="/Localization/">
+    <Project Path="Localization/Framework.Localization.csproj" />
+  </Folder>
+  <Folder Name="/Security/">
+    <Project Path="Framework.Security.Abstraction/Framework.Security.Abstraction.csproj" />
+    <Project Path="Framework.Security/Framework.Security.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Framework.BuildingBlock.Application.Contracts/Framework.BuildingBlock.Application.Contracts.csproj" />
+    <Project Path="src/Framework.BuildingBlock.Application/Framework.BuildingBlock.Application.csproj" />
+    <Project Path="src/Framework.BuildingBlock.Domain.Shared/Framework.BuildingBlock.Domain.Shared.csproj" />
+    <Project Path="src/Framework.BuildingBlock.Domain/Framework.BuildingBlock.Domain.csproj" />
+    <Project Path="src/Framework.BuildingBlock.EntityFrameworkCore/Framework.BuildingBlock.EntityFrameworkCore.csproj" />
+    <Project Path="src/Framework.BuildingBlock.HttpApi/Framework.BuildingBlock.HttpApi.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/Framework.BuildingBlock.Application.Tests/Framework.BuildingBlock.Application.Tests.csproj" />
+    <Project Path="test/Framework.BuildingBlock.Domain.Tests/Framework.BuildingBlock.Domain.Tests.csproj" />
+    <Project Path="test/Framework.BuildingBlock.EntityFrameworkCore.Tests/Framework.BuildingBlock.EntityFrameworkCore.Tests.csproj" />
+    <Project Path="test/Framework.BuildingBlock.TestBase/Framework.BuildingBlock.TestBase.csproj" />
+  </Folder>
+</Solution>

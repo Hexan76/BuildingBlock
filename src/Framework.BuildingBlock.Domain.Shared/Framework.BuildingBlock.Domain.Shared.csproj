@@ -1,24 +1,37 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<TargetFramework>net10.0</TargetFramework>
-		<RootNamespace>Framework.BuildingBlock</RootNamespace>
-	</PropertyGroup>
-	<ItemGroup>
-		<PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" />
-		<PackageReference Include="Volo.Abp.Ddd.Domain.Shared" />
-		<PackageReference Include="Volo.Abp.Validation" />
-		<PackageReference Include="MiniExcel" />
-
-	</ItemGroup>
-	<ItemGroup>
-	  <EmbeddedResource Include="Localization\Resources\en-US.json" />
-	  <EmbeddedResource Include="Localization\Resources\fa-IR.json" />
-	</ItemGroup>
-	<ItemGroup>
-	  <PackageReference Include="Volo.Abp.BackgroundJobs.Domain.Shared" />
-	  <ProjectReference Include="..\..\Framework.Security.Abstraction\Framework.Security.Abstraction.csproj" />
-	  <ProjectReference Include="..\..\HttpClientService\Framework.HttpClient.Abstractions\Framework.HttpClient.Abstractions.csproj" />
-	  <ProjectReference Include="..\..\Localization\Framework.Localization.csproj" />
-	</ItemGroup>
-
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <RootNamespace>Framework.BuildingBlock</RootNamespace>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" />
+        <PackageReference Include="Volo.Abp.Ddd.Domain.Shared" />
+        <PackageReference Include="Volo.Abp.Validation" />
+        <PackageReference Include="MiniExcel" />
+    </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="Localization\Resources\en-US.json" />
+        <EmbeddedResource Include="Localization\Resources\fa-IR.json" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Volo.Abp.BackgroundJobs.Domain.Shared" />
+        <ProjectReference Include="..\..\Framework.Security.Abstraction\Framework.Security.Abstraction.csproj" />
+        <ProjectReference Include="..\..\HttpClientService\Framework.HttpClient.Abstractions\Framework.HttpClient.Abstractions.csproj" />
+        <ProjectReference Include="..\..\Localization\Framework.Localization.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Serilog.AspNetCore" />
+        <PackageReference Include="Serilog.Settings.Configuration" />
+        <PackageReference Include="Serilog.Enrichers.Environment" />
+        <PackageReference Include="Serilog.Enrichers.Process" />
+        <PackageReference Include="Serilog.Enrichers.Thread" />
+        <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+        <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.SqlClient" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
+        <PackageReference Include="OpenTelemetry.Exporter.Console" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" />
+    </ItemGroup>
 </Project>

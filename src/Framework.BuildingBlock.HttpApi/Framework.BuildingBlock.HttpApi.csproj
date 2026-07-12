@@ -8,7 +8,6 @@
         <PackageReference Include="Volo.Abp.AspNetCore.Mvc" />
         <PackageReference Include="MassTransit" />
         <PackageReference Include="FastEndpoints" />
-        <PackageReference Include="FastEndpoints.Swagger" />
         <ProjectReference Include="..\Framework.BuildingBlock.Application.Contracts\Framework.BuildingBlock.Application.Contracts.csproj" />
     </ItemGroup>
 </Project>
