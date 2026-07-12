@@ -1,4 +1,5 @@
 using Framework.Localization;
+using Framework.RabbitMQ;
 using Volo.Abp.Caching.StackExchangeRedis;
 using Volo.Abp.Domain;
 using Volo.Abp.Modularity;
@@ -11,6 +12,7 @@ namespace Framework.BuildingBlock.Domain.Shared;
 
 [DependsOn(
     typeof(LocalizationModule),
+    typeof(RabbitMQModule),
     typeof(AbpValidationModule),
     typeof(AbpDddDomainSharedModule),
     typeof(AbpSecurityModule),
