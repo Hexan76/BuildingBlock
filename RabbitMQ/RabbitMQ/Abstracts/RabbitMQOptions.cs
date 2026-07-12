@@ -2,7 +2,7 @@ namespace Framework.RabbitMQ;
 
 public class RabbitMQOptions
 {
-    public const string SectionName = "Framework:RabbitMQ";
+    public const string SectionName = "RabbitMQ";
 
     public string HostName { get; set; } = "localhost";
 

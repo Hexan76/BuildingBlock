@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace Framework.RabbitMQ;
 
 public class Message<TPayload>

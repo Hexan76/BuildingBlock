@@ -10,9 +10,6 @@ public class RabbitMQModule : AbpModule
     {
         var configuration = context.Services.GetConfiguration();
 
-        context.Services.Configure<RabbitMQOptions>(
-            configuration.GetSection(RabbitMQOptions.SectionName));
-
-        context.Services.AddFrameworkRabbitMQ();
+        context.Services.AddFrameworkRabbitMQ(configuration);
     }
 }

@@ -1,10 +1,23 @@
 using System.Reflection;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Framework.RabbitMQ;
 
 public static class RabbitMQServiceCollectionExtensions
 {
+    public static IServiceCollection AddFrameworkRabbitMQ(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(configuration);
+
+        services.Configure<RabbitMQOptions>(configuration.GetSection(RabbitMQOptions.SectionName));
+
+        return services.AddFrameworkRabbitMQ();
+    }
+
     public static IServiceCollection AddFrameworkRabbitMQ(
         this IServiceCollection services,
         Action<RabbitMQOptions>? configure = null)
