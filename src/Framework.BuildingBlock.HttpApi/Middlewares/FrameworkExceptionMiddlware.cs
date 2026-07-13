@@ -76,12 +76,14 @@ public class FrameworkExceptionMiddlware : AbpExceptionHandlingMiddleware, ISing
             //    ? ex.StackTrace?.Split('\n').Select(l => $"\t{l.Trim()}").ToArray()
             //    : null;
 
-            var stackTrace = exceptionHandlingOptions.SendStackTraceToClients
-                ? ex.StackTrace?.Split('\n').Select(l => $"\t{l.Trim()}").ToArray()
-                : null;
+            string[] stackTraceLines = exceptionHandlingOptions.SendStackTraceToClients && ex.StackTrace is not null
+                ? ex.StackTrace.Split('\n').Select(l => $"\t{l.Trim()}").ToArray()
+                : [];
 
-            stackTrace.Append($"TraceId :{context.TraceIdentifier}");
-            var rejectMessage = ToApiResult(abpError, context, string.Join('\n', stackTrace));
+            string stackTrace = string.Join(
+                '\n',
+                stackTraceLines.Append($"TraceId :{context.TraceIdentifier}"));
+            var rejectMessage = ToApiResult(abpError, context, stackTrace);
 
             await context.Response.WriteAsync(jsonSerializer.Serialize(rejectMessage));
 

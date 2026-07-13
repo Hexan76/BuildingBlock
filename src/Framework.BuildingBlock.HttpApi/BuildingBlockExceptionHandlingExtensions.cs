@@ -2,6 +2,8 @@ using Framework.BuildingBlock.Domain.Shared;
 using Framework.BuildingBlock.HttpApi;
 using Volo.Abp.AspNetCore.ExceptionHandling;
 using Volo.Abp.ExceptionHandling;
+using Volo.Abp.Json;
+using Volo.Abp.Json.SystemTextJson;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -14,6 +16,8 @@ public static class BuildingBlockExceptionHandlingExtensions
             options.SendStackTraceToClients = false;
             options.SendExceptionsDetailsToClients = false;
         });
+
+        services.AddSingleton<IJsonSerializer, AbpSystemTextJsonSerializer>();
 
         services.AddSingleton<FrameworkExceptionMiddlware>();
         services.AddSingleton<IHttpExceptionStatusCodeFinder, FrameworkHttpExceptionStatusCodeFinder>();
