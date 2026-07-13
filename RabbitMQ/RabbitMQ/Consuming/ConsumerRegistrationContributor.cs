@@ -20,8 +20,8 @@ internal sealed class TypedConsumerRegistrationContributor<TConsumer, TMessage> 
             ConsumerType = consumerType,
             MessageType = messageType,
             QueueName = RabbitMetadataResolver.ResolveQueueName(consumerType, messageType),
-            ExchangeName = RabbitMetadataResolver.ResolveExchangeName(messageType, options),
-            RoutingKey = RabbitMetadataResolver.ResolveRoutingKey(messageType),
+            ExchangeName = RabbitMetadataResolver.ResolveExchangeName(consumerType, options),
+            RoutingKey = RabbitMetadataResolver.ResolveRoutingKey(consumerType),
             Durable = queueFlags.Durable,
             Exclusive = queueFlags.Exclusive,
             AutoDelete = queueFlags.AutoDelete
@@ -49,8 +49,8 @@ internal sealed class ReflectionConsumerRegistrationContributor : IConsumerRegis
             ConsumerType = _consumerType,
             MessageType = _messageType,
             QueueName = RabbitMetadataResolver.ResolveQueueName(_consumerType, _messageType),
-            ExchangeName = RabbitMetadataResolver.ResolveExchangeName(_messageType, options),
-            RoutingKey = RabbitMetadataResolver.ResolveRoutingKey(_messageType),
+            ExchangeName = RabbitMetadataResolver.ResolveExchangeName(_consumerType, options),
+            RoutingKey = RabbitMetadataResolver.ResolveRoutingKey(_consumerType),
             Durable = queueFlags.Durable,
             Exclusive = queueFlags.Exclusive,
             AutoDelete = queueFlags.AutoDelete

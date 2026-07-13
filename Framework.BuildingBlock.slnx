@@ -11,6 +11,9 @@
   <Folder Name="/Localization/">
     <Project Path="Localization/Framework.Localization.csproj" />
   </Folder>
+  <Folder Name="/RabbitMQ/">
+    <Project Path="RabbitMQ/Framework.RabbitMQ.csproj" />
+  </Folder>
   <Folder Name="/Security/">
     <Project Path="Framework.Security.Abstraction/Framework.Security.Abstraction.csproj" />
     <Project Path="Framework.Security/Framework.Security.csproj" />
