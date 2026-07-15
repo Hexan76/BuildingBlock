@@ -12,7 +12,8 @@ public class DomainExceptionHandler : IHashtExceptionHandler, ITransientDependen
         return ex is ResourceNotFoundException
                || ex is InsufficientStockException
                || ex is ConcurrencyConflictException
-               || ex is UpstreamServicesUnavailableException;
+               || ex is UpstreamServicesUnavailableException
+               || ex is InvalidOrderStateException;
     }
 
     public FrameworkRemoteErrorInfoDto Handle(
@@ -26,6 +27,7 @@ public class DomainExceptionHandler : IHashtExceptionHandler, ITransientDependen
             InsufficientStockException => BuildingBlockErrorCodes.InsufficientStock,
             ConcurrencyConflictException => BuildingBlockErrorCodes.ConcurrencyConflict,
             UpstreamServicesUnavailableException => BuildingBlockErrorCodes.UpstreamServicesUnavailable,
+            InvalidOrderStateException => BuildingBlockErrorCodes.InvalidOrderState,
             _ => "DOMAIN_ERROR"
         };
 

@@ -6,4 +6,5 @@ public static class BuildingBlockErrorCodes
     public const string InsufficientStock = "InsufficientStock";
     public const string ConcurrencyConflict = "ConcurrencyConflict";
     public const string UpstreamServicesUnavailable = "UpstreamServicesUnavailable";
+    public const string InvalidOrderState = "InvalidOrderState";
 }
