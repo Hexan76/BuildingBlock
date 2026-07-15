@@ -28,6 +28,8 @@ public class FrameworkHttpExceptionStatusCodeFinder : IHttpExceptionStatusCodeFi
 
             ConcurrencyConflictException => HttpStatusCode.Conflict,
 
+            UpstreamServicesUnavailableException => HttpStatusCode.ServiceUnavailable,
+
             IUserFriendlyException => HttpStatusCode.UnprocessableContent,
 
             IBusinessException => HttpStatusCode.UnprocessableContent,
