@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 using OpenTelemetry.Logs;
@@ -10,14 +11,21 @@ using OpenTelemetry.Trace;
 using Serilog;
 using Serilog.Events;
 using Serilog.Formatting.Compact;
+using Serilog.Sinks.OpenTelemetry;
 
 namespace Framework.Observability;
 
 public static class ServiceCollectionExtensions
 {
+    /// <summary>
+    /// Configures Serilog + OpenTelemetry from the <c>Observability</c> config section.
+    /// Pass <paramref name="hostBuilder"/> so Serilog is also registered on the host
+    /// (required for <c>UseSerilogRequestLogging()</c> / <c>DiagnosticContext</c>).
+    /// </summary>
     public static IServiceCollection AddObservability(
         this IServiceCollection services,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IHostBuilder? hostBuilder = null)
     {
         var options = configuration
             .GetSection(ObservabilityOptions.SectionName)
@@ -31,6 +39,12 @@ public static class ServiceCollectionExtensions
 
         ConfigureSerilog(configuration, options);
 
+        // Registers DiagnosticContext so UseSerilogRequestLogging() works.
+        if (options.Logging.Enabled && hostBuilder is not null)
+        {
+            hostBuilder.UseSerilog(Log.Logger, dispose: false);
+        }
+
         services.AddLogging(logging =>
         {
             logging.ClearProviders();
@@ -40,23 +54,26 @@ public static class ServiceCollectionExtensions
                 logging.AddSerilog(Log.Logger);
             }
 
-            logging.AddOpenTelemetry(otel =>
+            // MEL → OTLP is secondary; Serilog OTLP sink is the primary path for the log index.
+            // Keep this only when Serilog is disabled so ILogger still reaches the collector.
+            if (!options.Logging.Enabled)
             {
-                otel.SetResourceBuilder(CreateResourceBuilder(options));
-
-                otel.AddOtlpExporter(exporter =>
+                logging.AddOpenTelemetry(otel =>
                 {
-                    exporter.Endpoint = new Uri(options.OtlpEndpoint);
+                    otel.SetResourceBuilder(CreateResourceBuilder(options));
+
+                    otel.AddOtlpExporter(exporter =>
+                    {
+                        exporter.Endpoint = new Uri(options.OtlpEndpoint);
+                    });
+
+                    if (options.EnableConsoleExporter)
+                    {
+                        otel.AddConsoleExporter();
+                    }
                 });
-
-                if (options.EnableConsoleExporter)
-                {
-                    otel.AddConsoleExporter();
-                }
-            });
+            }
         });
-
-        var resourceBuilder = CreateResourceBuilder(options);
 
         services.AddOpenTelemetry()
 
@@ -172,6 +189,29 @@ public static class ServiceCollectionExtensions
             {
                 logger.WriteTo.Console();
             }
+        }
+
+        if (options.Logging.ExportToOtlp)
+        {
+            logger.WriteTo.OpenTelemetry(otlp =>
+            {
+                otlp.Endpoint = options.OtlpEndpoint;
+                otlp.Protocol = options.UseGrpc
+                    ? OtlpProtocol.Grpc
+                    : OtlpProtocol.HttpProtobuf;
+                otlp.ResourceAttributes = new Dictionary<string, object>
+                {
+                    ["service.name"] = options.ServiceName,
+                    ["service.version"] = options.ServiceVersion,
+                    ["service.namespace"] = options.ServiceNamespace,
+                    ["deployment.environment"] = options.Environment
+                };
+                otlp.IncludedData =
+                    IncludedData.TraceIdField |
+                    IncludedData.SpanIdField |
+                    IncludedData.MessageTemplateTextAttribute |
+                    IncludedData.SpecRequiredResourceAttributes;
+            });
         }
 
         Log.Logger = logger.CreateLogger();
