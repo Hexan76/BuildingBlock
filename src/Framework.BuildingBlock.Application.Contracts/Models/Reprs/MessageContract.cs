@@ -99,13 +99,13 @@ public class MessageContract
     {
         return new ApiResult
         {
-            ApplicationCode = applicationCode,
+            ApplicationCode = applicationCode ?? "500",
             Type = MessageResultType.Error,
             Severity = MessageContractResultSeverity.Error,
             Errors = errors,
             Error = new()
             {
-                Code = long.Parse(applicationCode),
+                Code = long.Parse(applicationCode ?? "500"),
                 HttpCode = statusCode,
                 Message = string.Join("\n", errors)
             },
