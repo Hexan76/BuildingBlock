@@ -26,7 +26,11 @@ public class FrameworkHttpExceptionStatusCodeFinder : IHttpExceptionStatusCodeFi
 
             InsufficientStockException => HttpStatusCode.BadRequest,
 
+            InvalidOrderStateException => HttpStatusCode.BadRequest,
+
             ConcurrencyConflictException => HttpStatusCode.Conflict,
+
+            UpstreamServicesUnavailableException => HttpStatusCode.ServiceUnavailable,
 
             IUserFriendlyException => HttpStatusCode.UnprocessableContent,
 

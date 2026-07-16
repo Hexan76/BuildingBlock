@@ -51,4 +51,10 @@ public sealed class LoggingOptions
     public bool Console { get; set; } = true;
 
     public bool JsonConsole { get; set; } = true;
+
+    /// <summary>
+    /// When true, Serilog exports logs via OTLP to <see cref="ObservabilityOptions.OtlpEndpoint"/>
+    /// (Elasticsearch / collector log index).
+    /// </summary>
+    public bool ExportToOtlp { get; set; } = true;
 }
