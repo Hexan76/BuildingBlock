@@ -9,6 +9,10 @@ public abstract class BaseEndpointWithoutRequest<TRequest, TResponse> : Endpoint
 {
     public IMediator Mediator { get; set; } = null!;
 
+    public override void Configure()
+    {
+        Version(1);
+    }
     public override async Task<MessageContract<TResponse>> ExecuteAsync(CancellationToken ct)
     {
         // Build the TRequest manually (default constructor or overridden)
