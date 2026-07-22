@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 
 using Framework.BuildingBlock.Data;
 using Framework.BuildingBlock.Entities;
+using Framework.BuildingBlock.Extensions;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -63,6 +64,8 @@ public abstract class FrameworkDbContext : DbContext
             {
                 modelBuilder.Entity(clrType).HasQueryFilter(BuildSoftDeleteFilter(clrType));
             }
+            modelBuilder.Entity(entityType.ClrType)
+                .ConfigureByConvention();
         }
     }
 

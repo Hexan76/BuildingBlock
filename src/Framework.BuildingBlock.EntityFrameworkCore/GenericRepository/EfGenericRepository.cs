@@ -202,3 +202,11 @@ public class EfGenericRepository<TEntity> : EfGenericRepository<TEntity, Guid>, 
     {
     }
 }
+public class EfGenericRepository<TDbContext, TEntity, TKey> : EfGenericRepository<TEntity, TKey>, IGenericRepository<TEntity,TKey>
+    where TEntity : Entity<TKey>
+    where TDbContext : DbContext
+{
+    public EfGenericRepository(TDbContext context) : base(context)
+    {
+    }
+}
