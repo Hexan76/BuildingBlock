@@ -1,6 +1,9 @@
-﻿using Framework.HttpClient.Abstractions;
+using Framework.HttpClient.Abstractions;
 using Framework.HttpClient.Http;
-using Microsoft.Extensions.Options;
+using Framework.HttpClient.Options;
+
+using Microsoft.Extensions.Configuration;
+
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -8,7 +11,9 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class DependencyInjectionExtensions
 {
-    public static void AddHttpClientFramework(this IServiceCollection services, string baseUrl = "https://api.example.com")
+    public static void AddHttpClientFramework(
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
         services.AddTransient<IRequestBuilder, RequestBuilder>();
         services.AddTransient<IRequestResolver, RequestResolver>();
@@ -16,25 +21,35 @@ public static class DependencyInjectionExtensions
         services.AddTransient<IHttpClientService, HttpClientService>();
         services.AddTransient<IResponseHandlerFactory, ResponseHandlerFactory>();
         services.AddTransient<HttpInterceptorService>();
-        services.AddHttpClient("Default", client =>
+
+        var externalServices = configuration
+            .GetSection(HttpServicesOptions.SectionName)
+            .Get<HttpServicesOptions>();
+
+        if (externalServices?.Services is not null)
         {
-            client.BaseAddress = new Uri(baseUrl);
-        })
-        .AddHttpMessageHandler<HttpInterceptorService>()
-        ;
+            foreach (var service in externalServices.Services)
+            {
+                services.AddHttpClient(service.Key, client =>
+                {
+                    client.BaseAddress = new Uri(service.Value.BaseUrl);
+                })
+                .AddHttpMessageHandler<HttpInterceptorService>();
+            }
+        }
+
 
         services.Configure<HttpClientServiceOptions>(cfg =>
         {
-            cfg.JsonSerializerOptions = new()
+            cfg.JsonSerializerOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
             };
+
             cfg.JsonSerializerOptions.Converters.Add(
                 new JsonStringEnumConverter());
-
         });
     }
 }
