@@ -13,19 +13,29 @@ public static class JsonSerializationExtensions
     {
         services.Configure<JsonOptions>(options =>
         {
-            options.SerializerOptions.PropertyNamingPolicy =
-                JsonNamingPolicy.CamelCase;
+            ConfigureJson(options.SerializerOptions);
+        });
 
-            options.SerializerOptions.PropertyNameCaseInsensitive = true;
-
-            options.SerializerOptions.Converters.Add(
-                new JsonStringEnumConverter()
-            );
-
-            options.SerializerOptions.DefaultIgnoreCondition =
-                JsonIgnoreCondition.WhenWritingNull;
+        services.Configure<JsonSerializerOptions>(options =>
+        {
+            ConfigureJson(options);
         });
 
         return services;
+    }
+
+
+    private static void ConfigureJson(JsonSerializerOptions options)
+    {
+        options.PropertyNamingPolicy =
+            JsonNamingPolicy.CamelCase;
+
+        options.PropertyNameCaseInsensitive = true;
+
+        options.Converters.Add(
+            new JsonStringEnumConverter());
+
+        options.DefaultIgnoreCondition =
+            JsonIgnoreCondition.WhenWritingNull;
     }
 }

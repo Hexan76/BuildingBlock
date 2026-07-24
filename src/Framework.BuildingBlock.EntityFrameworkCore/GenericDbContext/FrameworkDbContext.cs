@@ -1,10 +1,13 @@
 using System.Linq.Expressions;
 
 using Framework.BuildingBlock.Data;
+using Framework.BuildingBlock.Domain;
 using Framework.BuildingBlock.Entities;
 using Framework.BuildingBlock.Extensions;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Framework.BuildingBlock.EntityFrameworkCore;
 
@@ -23,11 +26,9 @@ public abstract class FrameworkDbContext : DbContext
     private readonly ICurrentUserAccessor _currentUser;
 
     protected FrameworkDbContext(
-        DbContextOptions options,
-        ICurrentUserAccessor? currentUser = null)
+        DbContextOptions options)
         : base(options)
     {
-        _currentUser = currentUser ?? NullCurrentUserAccessor.Instance;
     }
 
     /// <summary>
@@ -85,7 +86,7 @@ public abstract class FrameworkDbContext : DbContext
 
     private void ApplyFrameworkConcepts()
     {
-        var userId = _currentUser.UserId;
+        var userId = CurrentUserContext.UserId;
         var now = Now;
 
         foreach (var entry in ChangeTracker.Entries())
