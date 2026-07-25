@@ -1,4 +1,5 @@
 using Framework.BuildingBlock.Data;
+using Framework.BuildingBlock.DependencyInjection;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,9 @@ public static class FrameworkDataServiceCollectionExtensions
         where TDbContext : DbContext
     {
         services.TryAddScoped<DbContext>(sp => sp.GetRequiredService<TDbContext>());
+
+        // IClock + ILazyServiceProvider used by FrameworkDbContext.
+        services.AddFrameworkClock();
 
         services.TryAddSingleton<ICurrentUserAccessor>(NullCurrentUserAccessor.Instance);
 

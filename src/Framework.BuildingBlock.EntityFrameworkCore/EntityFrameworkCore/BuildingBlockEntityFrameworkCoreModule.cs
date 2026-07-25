@@ -1,5 +1,4 @@
 using Framework.BuildingBlock.Domain;
-using Microsoft.Extensions.DependencyInjection;
 
 using Volo.Abp.EntityFrameworkCore;
 using Volo.Abp.Modularity;
