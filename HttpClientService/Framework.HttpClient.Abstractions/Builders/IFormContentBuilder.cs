@@ -1,6 +1,6 @@
-﻿namespace Framework.HttpClient.Http;
+namespace Framework.HttpClient.Http;
 
 public interface IFormContentBuilder
 {
-    HttpContent Build(IDictionary<string, object> bodyContent, string contentType);
+    HttpContent Build(object bodyContent, string contentType);
 }

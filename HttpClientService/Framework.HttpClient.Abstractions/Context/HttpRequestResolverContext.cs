@@ -2,7 +2,7 @@ namespace Framework.HttpClient.Abstractions;
 
 public class HttpRequestResolverContext
 {
-    public HttpRequestResolverContext(string finalRoute,IDictionary<string, string> queryParams, IDictionary<string, object> bodyContent)
+    public HttpRequestResolverContext(string finalRoute,IDictionary<string, string> queryParams, object? bodyContent)
     {
         FinalRoute = finalRoute;
         QueryParams = queryParams;
@@ -10,5 +10,5 @@ public class HttpRequestResolverContext
     }
     public string FinalRoute { get; set; }
     public IDictionary<string, string> QueryParams { get; set; }
-    public IDictionary<string, object> BodyContent { get; set; }
+    public object BodyContent { get; set; }
 }

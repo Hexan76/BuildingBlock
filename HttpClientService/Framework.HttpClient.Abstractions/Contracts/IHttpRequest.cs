@@ -1,4 +1,4 @@
-﻿namespace Framework.HttpClient.Abstractions
+namespace Framework.HttpClient.Abstractions
 {
     public interface IHttpRequest
     {
