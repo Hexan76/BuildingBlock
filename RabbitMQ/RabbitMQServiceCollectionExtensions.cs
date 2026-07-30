@@ -47,6 +47,22 @@ public static class RabbitMQServiceCollectionExtensions
         return services;
     }
 
+    /// <summary>
+    /// Registers an RPC request handler that receives <typeparamref name="TRequest"/> and returns
+    /// <typeparamref name="TResponse"/>, which is sent back to the caller of
+    /// <see cref="IMessagePublisher.RequestAsync{TRequest, TResponse}"/>.
+    /// </summary>
+    public static IServiceCollection AddRabbitRequestHandler<THandler, TRequest, TResponse>(this IServiceCollection services)
+        where THandler : class, IMessageRequestHandler<TRequest, TResponse>
+        where TRequest : class
+        where TResponse : class
+    {
+        services.AddTransient<THandler>();
+        services.AddSingleton<IConsumerRegistrationContributor,
+            TypedRequestHandlerRegistrationContributor<THandler, TRequest, TResponse>>();
+        return services;
+    }
+
     public static IServiceCollection AddRabbitMQConsumers(this IServiceCollection services, params Assembly[] assemblies)
     {
         var types = assemblies
@@ -69,6 +85,23 @@ public static class RabbitMQServiceCollectionExtensions
 
                 // register a reflection-based contributor instance
                 services.AddSingleton<IConsumerRegistrationContributor>(new ReflectionConsumerRegistrationContributor(consumerType, messageType));
+            }
+
+            var requestHandlerInterfaces = typeInfo.ImplementedInterfaces
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IMessageRequestHandler<,>))
+                .ToArray();
+
+            foreach (var handlerInterface in requestHandlerInterfaces)
+            {
+                var genericArguments = handlerInterface.GetGenericArguments();
+                var requestType = genericArguments[0];
+                var responseType = genericArguments[1];
+                var handlerType = typeInfo.AsType();
+
+                services.AddTransient(handlerType);
+
+                services.AddSingleton<IConsumerRegistrationContributor>(
+                    new ReflectionConsumerRegistrationContributor(handlerType, requestType, responseType));
             }
         }
 

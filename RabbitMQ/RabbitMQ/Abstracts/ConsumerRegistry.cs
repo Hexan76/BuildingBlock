@@ -6,6 +6,14 @@ public class ConsumerRegistration
 
     public required Type MessageType { get; init; }
 
+    /// <summary>
+    /// When set, the consumer is an <see cref="IMessageRequestHandler{TRequest, TResponse}"/> whose
+    /// return value (of this type) is published back to the requester.
+    /// </summary>
+    public Type? ResponseType { get; init; }
+
+    public bool IsRequestHandler => ResponseType is not null;
+
     public required string QueueName { get; init; }
 
     public required string ExchangeName { get; init; }

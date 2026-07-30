@@ -208,6 +208,8 @@ public sealed class RabbitConsumerHostedService : IHostedService
                 RoutingKey = eventArgs.RoutingKey,
                 DeliveryTag = eventArgs.DeliveryTag,
                 RawBody = rawBody,
+                ReplyTo = eventArgs.BasicProperties.ReplyTo,
+                CorrelationId = eventArgs.BasicProperties.CorrelationId,
                 CancellationToken = cancellationToken
             };
 
@@ -220,6 +222,11 @@ public sealed class RabbitConsumerHostedService : IHostedService
                 context,
                 () => InvokeConsumerAsync(registration, wrapper, context, cancellationToken),
                 cancellationToken);
+
+            if (registration.IsRequestHandler && !string.IsNullOrEmpty(context.ReplyTo))
+            {
+                await PublishReplyAsync(channel, context, cancellationToken);
+            }
 
             await channel.BasicAckAsync(eventArgs.DeliveryTag, false, cancellationToken);
         }
@@ -242,6 +249,27 @@ public sealed class RabbitConsumerHostedService : IHostedService
     {
         await using var scope = _serviceProvider.CreateAsyncScope();
         var consumer = scope.ServiceProvider.GetRequiredService(registration.ConsumerType);
+
+        if (registration.IsRequestHandler)
+        {
+            var handlerInterface = typeof(IMessageRequestHandler<,>)
+                .MakeGenericType(registration.MessageType, registration.ResponseType!);
+            var handleMethod = handlerInterface.GetMethod("HandleAsync")
+                ?? throw new InvalidOperationException(
+                    $"Handler {registration.ConsumerType.Name} must implement " +
+                    $"IMessageRequestHandler<{registration.MessageType.Name}, {registration.ResponseType!.Name}>");
+
+            var handleTask = handleMethod.Invoke(consumer, new[] { messageWrapper, context, cancellationToken }) as Task
+                ?? throw new InvalidOperationException(
+                    $"Handler {registration.ConsumerType.Name}.HandleAsync did not return a Task.");
+
+            await handleTask;
+
+            // Task<TResponse>.Result is safe to read once the task has completed.
+            context.Response = handleTask.GetType().GetProperty("Result")?.GetValue(handleTask);
+            return;
+        }
+
         var consumerInterface = typeof(IMessageConsumer<>).MakeGenericType(registration.MessageType);
         var method = consumerInterface.GetMethod("ConsumeAsync")
             ?? throw new InvalidOperationException(
@@ -252,5 +280,34 @@ public sealed class RabbitConsumerHostedService : IHostedService
                 $"Consumer {registration.ConsumerType.Name}.ConsumeAsync did not return a Task.");
 
         await task;
+    }
+
+    private async Task PublishReplyAsync(
+        IChannel channel,
+        ConsumeContext context,
+        CancellationToken cancellationToken)
+    {
+        var replyBody = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(context.Response));
+
+        var properties = new BasicProperties
+        {
+            ContentType = "application/json",
+            CorrelationId = context.CorrelationId,
+            Type = context.Response?.GetType().FullName
+        };
+
+        // Direct reply-to: publish to the default exchange using the reply queue as the routing key.
+        await channel.BasicPublishAsync(
+            exchange: string.Empty,
+            routingKey: context.ReplyTo!,
+            mandatory: false,
+            basicProperties: properties,
+            body: replyBody,
+            cancellationToken: cancellationToken);
+
+        _logger.LogDebug(
+            "Sent RPC reply for correlationId {CorrelationId} to {ReplyTo}",
+            context.CorrelationId,
+            context.ReplyTo);
     }
 }
