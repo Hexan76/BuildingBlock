@@ -141,7 +141,10 @@ public sealed class RabbitConsumerHostedService : IHostedService
 
         try
         {
-            var payload = JsonSerializer.Deserialize(rawBody, registration.MessageType);
+            var payload = JsonSerializer.Deserialize(
+                rawBody,
+                registration.MessageType,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             if (payload == null)
             {
                 throw new InvalidOperationException(
