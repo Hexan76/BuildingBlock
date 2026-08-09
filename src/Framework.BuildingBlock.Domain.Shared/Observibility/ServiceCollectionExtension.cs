@@ -107,11 +107,17 @@ public static class ServiceCollectionExtensions
                 if (options.Instrumentation.SqlClient)
                     tracing.AddSqlClientInstrumentation();
 
+                if (options.Instrumentation.EfCore)
+                    tracing.AddEntityFrameworkCoreInstrumentation();
+
                 tracing.AddSource(options.ServiceName);
 
                 tracing.AddOtlpExporter(exporter =>
                 {
                     exporter.Endpoint = new Uri(options.OtlpEndpoint);
+                    exporter.Protocol = options.UseGrpc
+                        ? OpenTelemetry.Exporter.OtlpExportProtocol.Grpc
+                        : OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
                 });
 
                 if (options.EnableConsoleExporter)
@@ -136,6 +142,9 @@ public static class ServiceCollectionExtensions
                 metrics.AddOtlpExporter(exporter =>
                 {
                     exporter.Endpoint = new Uri(options.OtlpEndpoint);
+                    exporter.Protocol = options.UseGrpc
+                        ? OpenTelemetry.Exporter.OtlpExportProtocol.Grpc
+                        : OpenTelemetry.Exporter.OtlpExportProtocol.HttpProtobuf;
                 });
 
                 if (options.EnableConsoleExporter)
