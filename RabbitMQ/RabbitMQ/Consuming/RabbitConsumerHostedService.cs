@@ -78,7 +78,7 @@ public sealed class RabbitConsumerHostedService : IHostedService
 
     private async Task StartListenerAsync(ConsumerRegistration registration, CancellationToken cancellationToken)
     {
-        if (_options.AutoDeclareExchanges)
+        if (_options.AutoDeclareExchanges && !string.IsNullOrEmpty(registration.ExchangeName))
         {
             var exchangeType = RabbitMetadataResolver.ResolveExchangeType(registration.MessageType, _options);
             var (durable, autoDelete) = RabbitMetadataResolver.ResolveExchangeFlags(registration.MessageType);
@@ -91,7 +91,7 @@ public sealed class RabbitConsumerHostedService : IHostedService
                 cancellationToken);
         }
 
-        if (_options.AutoDeclareQueues)
+        if (_options.AutoDeclareExchanges && !string.IsNullOrEmpty(registration.ExchangeName))
         {
             await _topologyManager.DeclareQueueAsync(
                 registration.QueueName,

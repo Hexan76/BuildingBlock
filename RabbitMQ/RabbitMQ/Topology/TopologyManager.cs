@@ -97,12 +97,12 @@ public sealed class TopologyManager : ITopologyManager
     {
         await using var channel = await _connectionFactory.CreateChannelAsync(cancellationToken);
 
-        await channel.QueueBindAsync(
+            await channel.QueueBindAsync(
             queue: queueName,
             exchange: exchangeName,
             routingKey: routingKey,
             cancellationToken: cancellationToken);
-
+        
         _logger.LogDebug(
             "Queue bound: {Queue} -> {Exchange} [{RoutingKey}]",
             queueName,
