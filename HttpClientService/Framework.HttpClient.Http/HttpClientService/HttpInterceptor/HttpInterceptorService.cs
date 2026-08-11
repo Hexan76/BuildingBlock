@@ -3,31 +3,28 @@ using Microsoft.Extensions.Logging;
 
 namespace Framework.HttpClient.Http;
 
-public class HttpInterceptorService : DelegatingHandler, IHttpInterceptorService
+/// <summary>
+/// Default request/response interceptor callbacks.
+/// Wired into the pipeline via <see cref="RequestInterceptorHandler"/>.
+/// </summary>
+public class HttpInterceptorService(ILogger<HttpInterceptorService> logger) : IHttpInterceptorService
 {
-    private readonly ILogger<HttpInterceptorService> _logger;
-
-    public HttpInterceptorService(ILogger<HttpInterceptorService> logger)
-    {
-        _logger = logger;
-    }
-
     public virtual void OnBeforeSend(HttpRequestMessage request)
     {
 #if DEBUG
-        _logger.LogDebug("[Request] {Method} {RequestUri}", request.Method, request.RequestUri);
+        logger.LogDebug("[Request] {Method} {RequestUri}", request.Method, request.RequestUri);
 #endif
     }
 
     public virtual void OnAfterSend(HttpResponseMessage response)
     {
 #if DEBUG
-        _logger.LogDebug("[Response] {StatusCode}", response.StatusCode);
+        logger.LogDebug("[Response] {StatusCode}", response.StatusCode);
 #endif
     }
 
     public virtual void OnException(Exception ex)
     {
-        _logger.LogError(ex, "HTTP interceptor captured exception");
+        logger.LogError(ex, "HTTP interceptor captured exception");
     }
 }

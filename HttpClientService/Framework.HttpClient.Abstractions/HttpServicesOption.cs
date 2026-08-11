@@ -7,8 +7,11 @@ public class HttpServicesOptions
     public Dictionary<string, HttpClientItemServiceOptions> Services { get; set; } = new();
 }
 
-
 public class HttpClientItemServiceOptions
 {
     public string BaseUrl { get; set; } = default!;
+
+    public TimeSpan? Timeout { get; set; }
+
+    public Dictionary<string, string> DefaultHeaders { get; set; } = new();
 }
