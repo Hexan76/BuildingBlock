@@ -65,7 +65,12 @@ public static class FrameworkEntityTypeBuilderExtensions
 
         builder.TryConfigureModificationAudit();
 
-        builder.TryConfigureDeletionAudit();
+        if (typeof(IHasSoftDelete)
+            .IsAssignableFrom(clrType))
+        {
+
+            builder.TryConfigureDeletionAudit();
+        }
     }
 
 
