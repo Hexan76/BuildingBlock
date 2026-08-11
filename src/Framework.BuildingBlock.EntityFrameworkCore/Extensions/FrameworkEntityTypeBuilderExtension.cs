@@ -54,16 +54,14 @@ public static class FrameworkEntityTypeBuilderExtensions
         var clrType = builder.Metadata.ClrType;
 
 
-        if (!typeof(IHasAuditProperties)
+        if (typeof(IHasAuditProperties)
             .IsAssignableFrom(clrType))
         {
-            return;
+
+            builder.TryConfigureCreationAudit();
+
+            builder.TryConfigureModificationAudit();
         }
-
-
-        builder.TryConfigureCreationAudit();
-
-        builder.TryConfigureModificationAudit();
 
         if (typeof(IHasSoftDelete)
             .IsAssignableFrom(clrType))
