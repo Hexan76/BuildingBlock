@@ -38,6 +38,20 @@ public static class FastEndpointsSwaggerExtensions
                     s.Version =
                         module.Version;
 
+                    if (!string.IsNullOrWhiteSpace(module.ServerUrl))
+                    {
+                        s.PostProcess = document =>
+                        {
+                            document.Servers.Clear();
+
+                            document.Servers.Add(
+                                new NSwag.OpenApiServer
+                                {
+                                    Url = module.ServerUrl
+                                });
+                        };
+                    }
+
                     if (module.Headers?.Any() == true)
                     {
                         s.OperationProcessors.Add(

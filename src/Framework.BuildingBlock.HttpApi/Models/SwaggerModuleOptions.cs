@@ -12,9 +12,8 @@ public class SwaggerModuleOptions
     public bool EnableJWTBearerAuth { get; set; } = false;
     public Func<EndpointDefinition, bool> EndpointFilter { get; set; } = _ => true;
     public List<SwaggerHeaderOption>? Headers { get; set; }
-
-    public Dictionary<string, OpenApiSecurityScheme> SecurityDefinitions { get; set; }
-        = [];
+    public string? ServerUrl { get; set; }
+    public Dictionary<string, OpenApiSecurityScheme> SecurityDefinitions { get; set; } = [];
 }
 public class SwaggerHeaderOption
 {
