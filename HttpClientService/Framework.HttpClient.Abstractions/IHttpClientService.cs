@@ -10,8 +10,25 @@ public interface IHttpClientService
         string contentType = "application/json")
         where TResponse : class;
 
+    Task<TResponse> SendAsync<TResponse>(
+        IHttpRequest request,
+        CancellationToken cancellationToken,
+        ResponseType WrapType = ResponseType.Default,
+        string clientName = "",
+        Dictionary<string, string>? customHeaders = null,
+        string contentType = "application/json")
+        where TResponse : class;
+
     Task<TResponse> SendFormAsync<TResponse>(
         IHttpRequest request,
+        ResponseType WrapType = ResponseType.Default,
+        string clientName = "",
+        Dictionary<string, string>? customHeaders = null)
+        where TResponse : class;
+
+    Task<TResponse> SendFormAsync<TResponse>(
+        IHttpRequest request,
+        CancellationToken cancellationToken,
         ResponseType WrapType = ResponseType.Default,
         string clientName = "",
         Dictionary<string, string>? customHeaders = null)

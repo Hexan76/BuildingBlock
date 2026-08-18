@@ -1,23 +1,31 @@
-using NSwag;
-
 namespace Framework.BuildingBlock.HttpApi;
 
-public class SwaggerModuleOptions
+[Obsolete("Use OpenApiDefinitionOptions.")]
+public class SwaggerModuleOptions : OpenApiDefinitionOptions
 {
-    public string DocumentName { get; set; } = "API";
-    public string Title { get; set; } = "API";
-    public string Version { get; set; } = "v1";
-    public int ApiVersion { get; set; } = 1;
-    public bool ExcludeNonFastEndpoints { get; set; } = true;
-    public bool EnableJWTBearerAuth { get; set; } = false;
-    public Func<EndpointDefinition, bool> EndpointFilter { get; set; } = _ => true;
-    public List<SwaggerHeaderOption>? Headers { get; set; }
-    public string? ServerUrl { get; set; }
-    public Dictionary<string, OpenApiSecurityScheme> SecurityDefinitions { get; set; } = [];
+    public string? ServerUrl
+    {
+        get => Servers.FirstOrDefault()?.Url;
+        set
+        {
+            Servers.Clear();
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                Servers.Add(new OpenApiServerOption { Url = value });
+            }
+        }
+    }
+
+    public new List<SwaggerHeaderOption>? Headers
+    {
+        get => field;
+        set
+        {
+            field = value;
+            base.Headers = value is null ? null : [.. value];
+        }
+    }
 }
-public class SwaggerHeaderOption
-{
-    public string Name { get; set; } = default!;
-    public string Description { get; set; } = "";
-    public bool Required { get; set; } = false;
-}
+
+[Obsolete("Use OpenApiHeaderOption.")]
+public class SwaggerHeaderOption : OpenApiHeaderOption;

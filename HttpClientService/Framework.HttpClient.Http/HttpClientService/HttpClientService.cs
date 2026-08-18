@@ -13,8 +13,18 @@ public class HttpClientService(
     IOptions<HttpClientServiceOptions> httpOptions,
     IRequestResolver requestResolver) : IHttpClientService
 {
+    public Task<TResponse> SendAsync<TResponse>(
+        IHttpRequest request,
+        ResponseType WrapType = ResponseType.Default,
+        string clientName = "",
+        Dictionary<string, string>? customHeaders = null,
+        string contentType = "application/json")
+        where TResponse : class
+        => SendAsync<TResponse>(request, CancellationToken.None, WrapType, clientName, customHeaders, contentType);
+
     public async Task<TResponse> SendAsync<TResponse>(
         IHttpRequest request,
+        CancellationToken cancellationToken,
         ResponseType WrapType = ResponseType.Default,
         string clientName = "",
         Dictionary<string, string>? customHeaders = null,
@@ -27,12 +37,16 @@ public class HttpClientService(
             var message = requestBuilder.Build(request, contentType);
             AddCustomHeaders(message, customHeaders);
 
-            var response = await client.SendAsync(message);
+            var response = await client.SendAsync(message, cancellationToken);
             response.EnsureSuccessStatusCode();
 
             var handler = responseHandlerFactory.GetHandlerFor(WrapType,typeof(TResponse));
             var result = await handler.HandleAsync(response, typeof(TResponse));
             return (TResponse)result;
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
         }
         catch (Exception ex)
         {
@@ -41,8 +55,17 @@ public class HttpClientService(
         }
     }
 
+    public Task<TResponse> SendFormAsync<TResponse>(
+        IHttpRequest request,
+        ResponseType WrapType = ResponseType.Default,
+        string clientName = "",
+        Dictionary<string, string>? customHeaders = null)
+        where TResponse : class
+        => SendFormAsync<TResponse>(request, CancellationToken.None, WrapType, clientName, customHeaders);
+
     public async Task<TResponse> SendFormAsync<TResponse>(
         IHttpRequest request,
+        CancellationToken cancellationToken,
         ResponseType WrapType = ResponseType.Default,
         string clientName = "",
         Dictionary<string, string>? customHeaders = null)
@@ -55,7 +78,7 @@ public class HttpClientService(
         var message = new HttpRequestMessage(request.Method, request.Route) { Content = content };
         AddCustomHeaders(message, customHeaders);
 
-        var response = await client.SendAsync(message);
+        var response = await client.SendAsync(message, cancellationToken);
         response.EnsureSuccessStatusCode();
 
         var handler = responseHandlerFactory.GetHandlerFor(WrapType, typeof(TResponse));

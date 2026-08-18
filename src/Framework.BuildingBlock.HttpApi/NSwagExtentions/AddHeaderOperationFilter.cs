@@ -7,9 +7,9 @@ namespace Framework.BuildingBlock.HttpApi;
 
 public class AddHeaderOperationProcessor : IOperationProcessor
 {
-    private readonly List<SwaggerHeaderOption> _headers;
+    private readonly List<OpenApiHeaderOption> _headers;
 
-    public AddHeaderOperationProcessor(List<SwaggerHeaderOption> headers)
+    public AddHeaderOperationProcessor(List<OpenApiHeaderOption> headers)
     {
         _headers = headers;
     }
