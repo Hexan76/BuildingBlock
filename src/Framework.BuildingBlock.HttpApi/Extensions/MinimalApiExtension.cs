@@ -9,7 +9,7 @@ public static class MinimalApiExtension
         {
             endpoints.MapGet("/", context =>
             {
-                var pathBase = context.Request.PathBase;
+                var pathBase = context.Request.Path;
 
                 var redirectPath = pathBase.Add(path);
 
