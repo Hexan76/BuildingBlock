@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http;
+
 namespace Microsoft.AspNetCore.Builder;
 
 public static class MinimalApiExtension
@@ -7,11 +9,26 @@ public static class MinimalApiExtension
     {
         app.UseEndpoints(endpoints =>
         {
-            endpoints.MapGet("/", context =>
+           endpoints.MapGet("/", context =>
             {
-                var pathBase = context.Request.Path;
+                var pathBase = context.Request.PathBase;
 
-                var redirectPath = pathBase.Add(path);
+                // Kong commonly provides the external route prefix
+                // through X-Forwarded-Prefix.
+                if (string.IsNullOrEmpty(pathBase))
+                {
+                    var forwardedPrefix =
+                        context.Request.Headers["X-Forwarded-Prefix"].FirstOrDefault();
+
+                    if (!string.IsNullOrWhiteSpace(forwardedPrefix))
+                    {
+                        pathBase = new PathString(
+                            "/" + forwardedPrefix.Trim('/'));
+                    }
+                }
+
+                var redirectPath = pathBase.Add(
+                    new PathString("/" + path.Trim('/')));
 
                 context.Response.Redirect(redirectPath);
 
