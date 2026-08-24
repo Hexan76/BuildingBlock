@@ -1,6 +1,8 @@
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 
+using Framework.BuildingBlock.Domain.Shared;
+
 namespace Framework.BuildingBlock.Data;
 
 public interface IGenericRepository<TEntity, TKey>
@@ -28,6 +30,9 @@ public interface IGenericRepository<TEntity, TKey>
         Expression<Func<TEntity, bool>>? predicate = null,
         string? sorting = null,
         CancellationToken cancellationToken = default);
+
+    Task<PagedResult<TEntity>> PaginationAsync(FilterGroup filterGroup, IQueryable<TEntity>? externalQuery, int skip = 0, int maxResultCount = 10, string sort = "");
+    Task<PagedResult<TEntity>> PaginationPagingAsync(FilterGroup filterGroup, IQueryable<TEntity>? externalQuery, int page = 1, int pageSize = 10, string sort = "");
 
     Task<long> CountAsync(CancellationToken cancellationToken = default);
 

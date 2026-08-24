@@ -2,6 +2,7 @@ using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 
 using Framework.BuildingBlock.Data;
+using Framework.BuildingBlock.Domain.Shared;
 using Framework.BuildingBlock.Entities;
 
 using Microsoft.EntityFrameworkCore;
@@ -94,6 +95,74 @@ public class EfGenericRepository<TEntity, TKey> : IGenericRepository<TEntity, TK
             PageSize = pageSize,
             PageCount = pageCount,
             RowCount = (int)totalCount
+        };
+    }
+
+    public virtual async Task<PagedResult<TEntity>> PaginationAsync(
+        FilterGroup filterGroup,
+        IQueryable<TEntity> externalQuery,
+        int skip = 0,
+        int maxResultCount = 10,
+        string sort = "")
+    {
+        var query = externalQuery ?? GetQueryable()
+            .ApplyFilter(filterGroup)
+            .ApplySort(sort);
+
+        var totalCount = await query.CountAsync();
+
+        var pagedQuery = query
+            .Skip(skip)
+            .Take(maxResultCount);
+
+        var currentPage = maxResultCount <= 0
+            ? 1
+            : (skip / maxResultCount) + 1;
+
+        var pageCount = maxResultCount <= 0
+            ? 1
+            : (int)Math.Ceiling((double)totalCount / maxResultCount);
+
+        return new PagedResult<TEntity>
+        {
+            Queryable = pagedQuery,
+            RowCount = totalCount,
+            PageCount = pageCount,
+            CurrentPage = currentPage,
+            PageSize = maxResultCount
+        };
+    }
+    public virtual async Task<PagedResult<TEntity>> PaginationPagingAsync(
+        FilterGroup filterGroup,
+        IQueryable<TEntity> externalQuery,
+        int page = 1,
+        int pageSize = 10,
+        string sort = "")
+    {
+        page = page <= 0 ? 1 : page;
+        pageSize = pageSize <= 0 ? 10 : pageSize;
+
+        var query = externalQuery ?? GetQueryable()
+            .ApplyFilter(filterGroup)
+            .ApplySort(sort);
+
+        var totalCount = await query.CountAsync();
+
+        var skip = (page - 1) * pageSize;
+
+        var pagedQuery = query
+            .Skip(skip)
+            .Take(pageSize);
+
+        var pageCount = (int)Math.Ceiling((double)totalCount / pageSize);
+
+        return new PagedResult<TEntity>
+        {
+            Queryable = pagedQuery,
+            RowCount = totalCount,
+            PageCount = pageCount,
+            CurrentPage = page,
+            PageSize = pageSize
         };
     }
 
@@ -202,7 +271,7 @@ public class EfGenericRepository<TEntity> : EfGenericRepository<TEntity, Guid>, 
     {
     }
 }
-public class EfGenericRepository<TDbContext, TEntity, TKey> : EfGenericRepository<TEntity, TKey>, IGenericRepository<TEntity,TKey>
+public class EfGenericRepository<TDbContext, TEntity, TKey> : EfGenericRepository<TEntity, TKey>, IGenericRepository<TEntity, TKey>
     where TEntity : Entity<TKey>
     where TDbContext : DbContext
 {
