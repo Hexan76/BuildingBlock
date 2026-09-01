@@ -4,6 +4,9 @@
         <RootNamespace>Framework.BuildingBlock</RootNamespace>
     </PropertyGroup>
     <ItemGroup>
+      <Content Remove="C:\Users\BSLATech\.nuget\packages\volo.abp.aspnetcore.mvc\10.3.0\contentFiles\any\net10.0\Volo.Abp.AspNetCore.Mvc.abppkg.analyze.json" />
+    </ItemGroup>
+    <ItemGroup>
         <PackageReference Include="FastEndpoints.Swagger" />
         <PackageReference Include="Scalar.AspNetCore" />
         <PackageReference Include="Volo.Abp.AspNetCore.Mvc" />
