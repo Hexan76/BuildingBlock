@@ -1,3 +1,6 @@
+using System.Net.Http.Headers;
+using System.Text;
+
 using Framework.BuildingBlock.HttpApi;
 
 using Microsoft.AspNetCore.Builder;
@@ -49,6 +52,8 @@ public static class ScalarExtensions
                 ?? [];
         }
 
+        app.UseScalarBasicAuthentication(options);
+        
         app.UseOpenApi(openApi =>
         {
             openApi.Path = options.OpenApiPath;
@@ -146,5 +151,142 @@ public static class ScalarExtensions
             .FirstOrDefault(definition =>
                 path.Contains(definition.DocumentName, StringComparison.OrdinalIgnoreCase)
                 || path.Contains(Uri.EscapeDataString(definition.DocumentName), StringComparison.OrdinalIgnoreCase));
+    }
+    private static void UseScalarBasicAuthentication(
+       this WebApplication app,
+       ScalarUiOptions options)
+    {
+        if (!options.IsBasicAuthenticationEnabled)
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(options.Username))
+        {
+            throw new InvalidOperationException(
+                "Scalar BasicAuthentication Username is not configured.");
+        }
+
+        if (string.IsNullOrWhiteSpace(options.Password))
+        {
+            throw new InvalidOperationException(
+                "Scalar BasicAuthentication Password is not configured.");
+        }
+
+        app.Use(async (context, next) =>
+        {
+            var isScalarRequest =
+                context.Request.Path.StartsWithSegments(
+                    "/scalar",
+                    StringComparison.OrdinalIgnoreCase);
+
+            /*
+             * Optional but recommended.
+             *
+             * Protect OpenAPI documents too.
+             */
+            var isOpenApiRequest =
+                context.Request.Path.StartsWithSegments(
+                    "/openapi",
+                    StringComparison.OrdinalIgnoreCase);
+
+            if (!isScalarRequest && !isOpenApiRequest)
+            {
+                await next();
+                return;
+            }
+
+            if (!context.Request.Headers.TryGetValue(
+                    "Authorization",
+                    out var authorizationHeader))
+            {
+                Challenge(context);
+                return;
+            }
+
+            if (!AuthenticationHeaderValue.TryParse(
+                    authorizationHeader,
+                    out var authenticationHeader))
+            {
+                Challenge(context);
+                return;
+            }
+
+            if (!string.Equals(
+                    authenticationHeader.Scheme,
+                    "Basic",
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                Challenge(context);
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(
+                    authenticationHeader.Parameter))
+            {
+                Challenge(context);
+                return;
+            }
+
+            string credentials;
+
+            try
+            {
+                var credentialBytes =
+                    Convert.FromBase64String(
+                        authenticationHeader.Parameter);
+
+                credentials =
+                    Encoding.UTF8.GetString(
+                        credentialBytes);
+            }
+            catch (FormatException)
+            {
+                Challenge(context);
+                return;
+            }
+
+            var separatorIndex =
+                credentials.IndexOf(':');
+
+            if (separatorIndex <= 0)
+            {
+                Challenge(context);
+                return;
+            }
+
+            var username =
+                credentials[..separatorIndex];
+
+            var password =
+                credentials[(separatorIndex + 1)..];
+
+            var isValid =
+                string.Equals(
+                    username,
+                    options.Username,
+                    StringComparison.Ordinal)
+                &&
+                string.Equals(
+                    password,
+                    options.Password,
+                    StringComparison.Ordinal);
+
+            if (!isValid)
+            {
+                Challenge(context);
+                return;
+            }
+
+            await next();
+        });
+    }
+    private static void Challenge(HttpContext context)
+    {
+        context.Response.StatusCode =
+            StatusCodes.Status401Unauthorized;
+
+        context.Response.Headers.WWWAuthenticate =
+            """Basic realm="Scalar API Documentation", charset="UTF-8" """;
     }
 }
