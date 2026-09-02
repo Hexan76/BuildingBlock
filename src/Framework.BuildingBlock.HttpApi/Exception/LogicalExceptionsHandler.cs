@@ -1,5 +1,7 @@
 using Framework.BuildingBlock.Domain.Shared;
+
 using Microsoft.Extensions.Localization;
+
 using Volo.Abp;
 using Volo.Abp.DependencyInjection;
 
@@ -9,12 +11,12 @@ namespace Framework.BuildingBlock.HttpApi;
 public class LogicalExceptionsHandler : IHashtExceptionHandler, ITransientDependency
 {
     private readonly IStringLocalizerFactory _localizerFactory;
-    private IStringLocalizer L;
 
     public LogicalExceptionsHandler(IStringLocalizerFactory localizerFactory)
     {
         _localizerFactory = localizerFactory;
     }
+
     public bool CanHandle(Exception ex)
     {
         return ex is UserFriendlyException || ex is BusinessException;
@@ -27,23 +29,32 @@ public class LogicalExceptionsHandler : IHashtExceptionHandler, ITransientDepend
     {
         var businessEx = ex as BusinessException ?? ex as UserFriendlyException;
 
-        string message = businessEx?.Message ?? "An error occurred.";
-        string code = businessEx?.Code ?? "LOGICAL_ERROR";
+        var message = businessEx?.Message ?? "An error occurred.";
+        var code = businessEx?.Code ?? "LOGICAL_ERROR";
 
-        if (businessEx?.Data.Contains(ExceptionConstants.ResourceType) == true
-            && businessEx.Data[ExceptionConstants.ResourceType] is Type resourceType)
+        if (businessEx?.Data.Contains(ExceptionConstants.ResourceType) == true &&
+            businessEx.Data[ExceptionConstants.ResourceType] is Type resourceType)
         {
-            if (resourceType != null)
+            var localizer = _localizerFactory.Create(resourceType);
+
+            var key = $"Exceptions.{message}";
+
+            if (businessEx.Data[ExceptionConstants.Parameters] is object[] parameters)
             {
-                L = _localizerFactory.Create(resourceType);
+                message = localizer[key, parameters];
             }
-            message = L[$"Exceptions.{message}"];
+            else
+            {
+                message = localizer[key];
+            }
         }
 
-        return CreateError(message, code, ex, sendExceptionsDetailsToClients);
+        return CreateError(
+            message,
+            code,
+            ex,
+            sendExceptionsDetailsToClients);
     }
-
-    // ---------------- Private ----------------
 
     private static FrameworkRemoteErrorInfoDto CreateError(
         string message,

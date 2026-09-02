@@ -13,4 +13,11 @@ public class ScalarUiOptions
     public List<OpenApiServerOption> Servers { get; set; } = [];
     public OpenApiDefinitionOptions[] Definitions { get; set; } = [];
     public Action<ScalarOptions>? Configure { get; set; }
+    public string? Username { get; set; }
+
+    public string? Password { get; set; }
+
+    public bool IsBasicAuthenticationEnabled =>
+        !string.IsNullOrWhiteSpace(Username) &&
+        !string.IsNullOrWhiteSpace(Password);
 }
