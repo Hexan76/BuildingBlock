@@ -204,6 +204,9 @@ public static class DependencyInjectionExtensions
 
     private static void RegisterCoreServices(IServiceCollection services)
     {
+        // HttpClientService depends on IHttpClientFactory; AddHttpClient() registers it.
+        services.AddHttpClient();
+
         services.TryAddTransient<IRequestBuilder, RequestBuilder>();
         services.TryAddTransient<IRequestResolver, RequestResolver>();
         services.TryAddTransient<IFormContentBuilder, FormContentBuilder>();
