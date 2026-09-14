@@ -20,7 +20,7 @@ public class FrameworkHttpExceptionStatusCodeFinder : IHttpExceptionStatusCodeFi
         {
             AbpValidationException => HttpStatusCode.BadRequest,
 
-            EntityNotFoundException => HttpStatusCode.BadRequest,
+            EntityNotFoundException => HttpStatusCode.NotFound,
 
             ResourceNotFoundException => HttpStatusCode.NotFound,
 

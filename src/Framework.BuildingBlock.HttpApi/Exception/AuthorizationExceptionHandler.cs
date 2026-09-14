@@ -36,7 +36,7 @@ public class AuthorizationExceptionHandler : IHashtExceptionHandler, ITransientD
         {
             return CreateError(
                 L["Auth:Unauthorized"],
-                "AUTH_UNAUTHORIZED",
+                "401",
                 ex,
                 sendExceptionsDetailsToClients);
         }
@@ -45,14 +45,14 @@ public class AuthorizationExceptionHandler : IHashtExceptionHandler, ITransientD
         {
             return CreateError(
                 L["Auth:Forbidden"],
-                "AUTH_FORBIDDEN",
+                "403",
                 ex,
                 sendExceptionsDetailsToClients);
         }
 
         return CreateError(
             L["Auth:Unauthorized"],
-            "AUTH_UNKNOWN",
+            "401",
             ex,
             sendExceptionsDetailsToClients);
     }

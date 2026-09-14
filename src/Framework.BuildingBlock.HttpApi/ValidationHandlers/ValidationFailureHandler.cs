@@ -22,7 +22,8 @@ public class ValidationFailureHandler : IValidationFailureHandler, ISingletonDep
                     CustomState = f.CustomState,
                     FormattedMessagePlaceholderValues = f.FormattedMessagePlaceholderValues
                 }).ToList();
-        return MessageContract.Validation(validaitons, "403", ctx);
+        ctx.Response.StatusCode = statusCode;
+        return MessageContract.Validation(validaitons, statusCode.ToString(), ctx);
 
     }
 }

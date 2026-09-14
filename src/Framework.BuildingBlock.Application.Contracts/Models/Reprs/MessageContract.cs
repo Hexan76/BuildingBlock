@@ -76,16 +76,20 @@ public class MessageContract
     public static ApiResult Validation(IEnumerable<FrameworkValidation> validations, string applicationCode, HttpContext httpContext)
     {
         string[] errors = ["One or more validation errors occurred.", $"Request Path : {httpContext.Request.Path}"];
+        var httpCode = httpContext.Response.StatusCode is >= 400 and < 600
+            ? httpContext.Response.StatusCode
+            : 400;
+        var code = int.TryParse(applicationCode, out var parsed) ? parsed : httpCode;
         return new ApiResult(validations)
         {
-            ApplicationCode = "400",
+            ApplicationCode = code.ToString(),
             Type = MessageResultType.Validation,
             Errors = errors,
             StackTrace = $"TraceId :{httpContext.TraceIdentifier}",
             Error = new()
             {
-                Code = int.Parse(applicationCode),
-                HttpCode = httpContext.Response.StatusCode,
+                Code = code,
+                HttpCode = httpCode,
                 Message = string.Join("\n", errors)
             },
             Snackbar = new()
@@ -97,15 +101,16 @@ public class MessageContract
     }
     public static ApiResult ToError(string applicationCode, string[] errors, int statusCode, string stackTrace)
     {
+        var code = long.TryParse(applicationCode, out var parsed) ? parsed : statusCode;
         return new ApiResult
         {
-            ApplicationCode = applicationCode ?? "500",
+            ApplicationCode = code.ToString(),
             Type = MessageResultType.Error,
             Severity = MessageContractResultSeverity.Error,
             Errors = errors,
             Error = new()
             {
-                Code = long.Parse(applicationCode ?? "500"),
+                Code = code,
                 HttpCode = statusCode,
                 Message = string.Join("\n", errors)
             },
