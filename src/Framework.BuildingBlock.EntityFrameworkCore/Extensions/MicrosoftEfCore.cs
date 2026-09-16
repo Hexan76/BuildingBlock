@@ -1,10 +1,14 @@
-using Framework.BuildingBlock;
-using Framework.BuildingBlock.Domain.Shared;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using System.Linq.Dynamic.Core;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+
+using Framework.BuildingBlock;
+using Framework.BuildingBlock.Domain.Shared;
+using Framework.BuildingBlock.Models;
+
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Microsoft.EntityFrameworkCore;
 
@@ -106,6 +110,67 @@ public static class MicrosoftEfCore
         return source.OrderBy(sortExpression);
     }
 
+    public static IQueryable<T> ApplySorting<T>(
+       this IQueryable<T> query,
+       IEnumerable<SortItem> sorts)
+    {
+        IOrderedQueryable<T>? orderedQuery = null;
+
+        foreach (var sort in sorts)
+        {
+            var property = typeof(T).GetProperty(
+                sort.Field,
+                BindingFlags.IgnoreCase |
+                BindingFlags.Public |
+                BindingFlags.Instance);
+
+            if (property is null)
+                continue;
+
+            var parameter = Expression.Parameter(typeof(T), "x");
+
+            var propertyAccess = Expression.Property(
+                parameter,
+                property);
+
+            var lambda = Expression.Lambda(
+                propertyAccess,
+                parameter);
+
+            string methodName;
+
+            if (orderedQuery is null)
+            {
+                methodName = sort.Descending
+                    ? nameof(Queryable.OrderByDescending)
+                    : nameof(Queryable.OrderBy);
+            }
+            else
+            {
+                methodName = sort.Descending
+                    ? nameof(Queryable.ThenByDescending)
+                    : nameof(Queryable.ThenBy);
+            }
+
+            var method = typeof(Queryable)
+                .GetMethods()
+                .First(m =>
+                    m.Name == methodName &&
+                    m.GetParameters().Length == 2);
+
+            var genericMethod = method.MakeGenericMethod(
+                typeof(T),
+                property.PropertyType);
+
+            var result = genericMethod.Invoke(
+                null,
+                new object[] { orderedQuery ?? query, lambda });
+
+            orderedQuery = (IOrderedQueryable<T>)result!;
+        }
+
+        return orderedQuery ?? query;
+    }
     /// <summary>
     /// Applies a dynamic where clause if predicate is not null or empty.
     /// </summary>
