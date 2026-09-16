@@ -38,17 +38,27 @@ public class JsonStringLocalizer : IStringLocalizer
     }
     private LocalizedString GetStringLocalizedByCulture(string key, CultureInfo culture)
     {
-        if (!_cacheDictionary.TryGetValue(culture.TwoLetterISOLanguageName, out var resourceDict))
-        {
-            if (!_cacheDictionary.TryGetValue(CultureInfo.InvariantCulture.TwoLetterISOLanguageName, out var defaultDict))
-            {
-                return new LocalizedString(key, key);
-            }
+        if (_cacheDictionary is null)
+            return new LocalizedString(key, key);
 
-            return new LocalizedString(key, defaultDict.TryGetValue(key, out var defaultValue) ? defaultValue : key);
+        if (TryGet(culture.Name, key, out var value) ||
+            TryGet(culture.TwoLetterISOLanguageName, key, out value) ||
+            TryGet("en-US", key, out value) ||
+            TryGet("en", key, out value))
+        {
+            return new LocalizedString(key, value);
         }
 
-        return new LocalizedString(key, resourceDict.TryGetValue(key, out var value) ? value : key);
+        return new LocalizedString(key, key);
+    }
+
+    private bool TryGet(string cultureKey, string key, out string value)
+    {
+        value = null!;
+        if (!_cacheDictionary.TryGetValue(cultureKey, out var resourceDict))
+            return false;
+
+        return resourceDict.TryGetValue(key, out value!);
     }
 }
 

@@ -73,7 +73,9 @@ public class JsonStringLocalizerFactory : IJsonStringLocalizerFactory
                 var json = reader.ReadToEnd();
                 var flat = FlattenJson(json);
 
-                perCultureDict[supportCulture.TwoLetterISOLanguageName] = flat;
+                perCultureDict[supportCulture.Name] = flat;
+                if (!perCultureDict.ContainsKey(supportCulture.TwoLetterISOLanguageName))
+                    perCultureDict[supportCulture.TwoLetterISOLanguageName] = flat;
             }
 
             _localizedData[resource.ResourceType] = perCultureDict;

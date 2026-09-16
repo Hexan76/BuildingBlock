@@ -1,3 +1,5 @@
+using Framework.BuildingBlock.Models;
+
 namespace Framework.BuildingBlock.Application.Contracts;
 
 public abstract class PagedAndResultRequestFramework
@@ -8,4 +10,8 @@ public abstract class PagedAndResultRequestFramework
 public abstract class PagedAndSortedResultRequestFramework : PagedAndResultRequestFramework
 {
     public string Sort { get; set; }
+}
+public abstract class PagedAndMultipleSortedResultRequestFramework : PagedAndResultRequestFramework
+{
+    public IEnumerable<SortItem>? Sorts { get; set; }
 }
