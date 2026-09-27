@@ -27,6 +27,7 @@ public static class BuildingBlockExceptionHandlingExtensions
         services.AddTransient<LogicalExceptionsHandler>();
         services.AddTransient<DomainExceptionHandler>();
         services.AddTransient<AuthorizationExceptionHandler>();
+        services.AddTransient<HttpClientFaultExceptionHandler>();
         services.AddTransient<DefaultExceptionHandler>();
         services.AddSingleton<IEnumerable<IHashtExceptionHandler>>(sp =>
             new IHashtExceptionHandler[]
@@ -34,6 +35,7 @@ public static class BuildingBlockExceptionHandlingExtensions
                 sp.GetRequiredService<AuthorizationExceptionHandler>(),
                 sp.GetRequiredService<DomainExceptionHandler>(),
                 sp.GetRequiredService<LogicalExceptionsHandler>(),
+                sp.GetRequiredService<HttpClientFaultExceptionHandler>(),
                 sp.GetRequiredService<DefaultExceptionHandler>(),
             });
 

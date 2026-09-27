@@ -4,6 +4,8 @@ using Framework.HttpClient.Options;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -68,11 +70,14 @@ public static class DependencyInjectionExtensions
     ///
     /// services.AddHttpClientService("Orders", configuration)
     ///     .AddHttpMessageHandler&lt;ServiceAuthenticationHandler&gt;()
-    ///     .ConfigureClient(c =&gt; c.Timeout = TimeSpan.FromSeconds(60));
+    ///     .ConfigureErrorPolicy(p =&gt; p.Propagate(404, 409).MapRange(500, 599, 503));
     ///
     /// services.AddHttpClientService("Payments", configuration)
-    ///     .AddHttpMessageHandler&lt;ServiceAuthenticationHandler&gt;()
-    ///     .AddHttpMessageHandler&lt;PaymentsCustomHandler&gt;();
+    ///     .AddHttpMessageHandler&lt;ServiceAuthenticationHandler&gt;();
+    ///
+    /// // Resolve a bound client:
+    /// //   IHttpClientAccessor.For("Orders")
+    /// //   [FromKeyedServices("Orders")] IHttpClientService orders
     /// </code>
     /// </example>
     public static HttpClientServiceBuilder AddHttpClientService(
@@ -162,8 +167,16 @@ public static class DependencyInjectionExtensions
             configureClient?.Invoke(client);
         });
 
-        // Framework default interceptor (before microservice-specific handlers).
-        builder.AddHttpMessageHandler<RequestInterceptorHandler>();
+        builder.AddHttpMessageHandler(sp => new RequestInterceptorHandler(
+            sp.GetRequiredService<IHttpInterceptorService>(),
+            sp.GetRequiredService<ILogger<RequestInterceptorHandler>>(),
+            sp.GetRequiredService<IOptions<HttpClientServiceOptions>>())
+        {
+            ClientName = clientName
+        });
+
+        services.AddKeyedTransient<IHttpClientService>(clientName, (sp, _) =>
+            new BoundHttpClientService(sp.GetRequiredService<IHttpClientService>(), clientName));
 
         return new HttpClientServiceBuilder(builder);
     }
@@ -214,6 +227,8 @@ public static class DependencyInjectionExtensions
         services.TryAddTransient<IResponseHandlerFactory, ResponseHandlerFactory>();
         services.TryAddTransient<IHttpInterceptorService, HttpInterceptorService>();
         services.TryAddTransient<RequestInterceptorHandler>();
+        services.TryAddTransient<IHttpClientAccessor, HttpClientAccessor>();
+        services.TryAddSingleton<IHttpClientErrorPolicyRegistry, HttpClientErrorPolicyRegistry>();
     }
 
     private static void EnsureCoreServices(IServiceCollection services)

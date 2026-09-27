@@ -14,6 +14,7 @@
         <PackageReference Include="MassTransit" />
         <PackageReference Include="FastEndpoints" />
         <ProjectReference Include="..\Framework.BuildingBlock.Application.Contracts\Framework.BuildingBlock.Application.Contracts.csproj" />
+        <ProjectReference Include="..\..\HttpClientService\Framework.HttpClient.Abstractions\Framework.HttpClient.Abstractions.csproj" />
     </ItemGroup>
     <ItemGroup>
       <Folder Include="ScalarExtensions\" />

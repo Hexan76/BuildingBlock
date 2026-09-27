@@ -1,4 +1,5 @@
 ﻿using Framework.HttpClient.Abstractions;
+
 using Microsoft.Extensions.Options;
 
 namespace Framework.HttpClient.Http;
@@ -15,7 +16,6 @@ public class ResponseHandlerFactory(
     {
         return responseType switch
         {
-
             ResponseType.Default =>
                 (IResponseHandler)Activator.CreateInstance(
                     typeof(AcceptedResponseHandler<>)
@@ -23,12 +23,10 @@ public class ResponseHandlerFactory(
                     _options.JsonSerializerOptions)!,
 
             ResponseType.Full =>
-                new MessageContractHandler(
-                    _options.JsonSerializerOptions),
+                new DefaultResponseHandler(_options.JsonSerializerOptions),
 
             ResponseType.Custom =>
-                new DefaultResponseHandler(
-                    _options.JsonSerializerOptions),
+                new DefaultResponseHandler(_options.JsonSerializerOptions),
 
             _ => throw new ArgumentOutOfRangeException(
                 nameof(responseType),

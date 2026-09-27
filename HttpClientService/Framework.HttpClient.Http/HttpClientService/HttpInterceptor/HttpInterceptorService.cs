@@ -11,16 +11,12 @@ public class HttpInterceptorService(ILogger<HttpInterceptorService> logger) : IH
 {
     public virtual void OnBeforeSend(HttpRequestMessage request)
     {
-#if DEBUG
         logger.LogDebug("[Request] {Method} {RequestUri}", request.Method, request.RequestUri);
-#endif
     }
 
     public virtual void OnAfterSend(HttpResponseMessage response)
     {
-#if DEBUG
         logger.LogDebug("[Response] {StatusCode}", response.StatusCode);
-#endif
     }
 
     public virtual void OnException(Exception ex)

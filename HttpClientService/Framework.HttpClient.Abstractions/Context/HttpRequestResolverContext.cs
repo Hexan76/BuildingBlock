@@ -10,5 +10,5 @@ public class HttpRequestResolverContext
     }
     public string FinalRoute { get; set; }
     public IDictionary<string, string> QueryParams { get; set; }
-    public object BodyContent { get; set; }
+    public object? BodyContent { get; set; }
 }

@@ -1,6 +1,7 @@
 using System.Net;
 
 using Framework.BuildingBlock.Domain.Shared.Exceptions;
+using Framework.HttpClient.Abstractions.Exceptions;
 
 using Microsoft.AspNetCore.Http;
 
@@ -32,6 +33,14 @@ public class FrameworkHttpExceptionStatusCodeFinder : IHttpExceptionStatusCodeFi
 
             UpstreamServicesUnavailableException => HttpStatusCode.ServiceUnavailable,
 
+            HttpClientFaultException fault => ResolveHttpClientFault(fault),
+
+            TransportTimeoutException => HttpStatusCode.GatewayTimeout,
+
+            TransportSerializationException => HttpStatusCode.BadGateway,
+
+            TransportException => HttpStatusCode.ServiceUnavailable,
+
             IUserFriendlyException => HttpStatusCode.UnprocessableContent,
 
             IBusinessException => HttpStatusCode.UnprocessableContent,
@@ -42,5 +51,14 @@ public class FrameworkHttpExceptionStatusCodeFinder : IHttpExceptionStatusCodeFi
 
             _ => HttpStatusCode.InternalServerError
         };
+    }
+
+    private static HttpStatusCode ResolveHttpClientFault(HttpClientFaultException fault)
+    {
+        var status = fault.Fault.PublicStatusCode;
+        if (status is >= 400 and < 600)
+            return (HttpStatusCode)status;
+
+        return HttpStatusCode.BadGateway;
     }
 }
