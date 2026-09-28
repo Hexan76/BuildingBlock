@@ -15,11 +15,12 @@ public abstract class BaseEndpointWithoutRequest<TRequest, TResponse> : Endpoint
         Version(1);
     }
 
-    public override async Task HandleAsync(CancellationToken ct)
+    public override async Task<MessageContract<TResponse>> ExecuteAsync(CancellationToken ct)
     {
+        // Build the TRequest manually (default constructor or overridden)
         var req = await CreateRequestAsync(ct);
-        var result = await Mediator.Send(req, ct);
-        await Send.ResponseAsync(result, ResolveStatusCode(result), cancellation: ct);
+
+        return await Mediator.Send(req, ct);
     }
 
     /// <summary>
@@ -30,9 +31,4 @@ public abstract class BaseEndpointWithoutRequest<TRequest, TResponse> : Endpoint
         var request = new TRequest();
         return Task.FromResult(request);
     }
-
-    private static int ResolveStatusCode(MessageContract<TResponse> result)
-        => result is ApiResult<TResponse> { Success: false, Error.HttpCode: > 0 } failed
-            ? failed.Error.HttpCode
-            : StatusCodes.Status200OK;
 }
