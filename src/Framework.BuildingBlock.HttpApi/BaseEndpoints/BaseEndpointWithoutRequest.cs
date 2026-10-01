@@ -1,4 +1,7 @@
+using System.Reflection;
+using System.Globalization;
 using Framework.BuildingBlock.Application.Contracts;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
@@ -15,20 +18,44 @@ public abstract class BaseEndpointWithoutRequest<TRequest, TResponse> : Endpoint
         Version(1);
     }
 
-    public override async Task<MessageContract<TResponse>> ExecuteAsync(CancellationToken ct)
-    {
-        // Build the TRequest manually (default constructor or overridden)
-        var req = await CreateRequestAsync(ct);
-
-        return await Mediator.Send(req, ct);
-    }
-
-    /// <summary>
-    /// Override this in child classes to construct the request model.
-    /// </summary>
-    protected virtual Task<TRequest> CreateRequestAsync(CancellationToken ct)
+    public override async Task<MessageContract<TResponse>> ExecuteAsync(
+        CancellationToken ct)
     {
         var request = new TRequest();
-        return Task.FromResult(request);
+
+        BindRouteValues(request);
+
+        ThrowIfAnyErrors();
+
+        return await Mediator.Send(request, ct);
+    }
+
+    private void BindRouteValues(TRequest request)
+    {
+        var properties = typeof(TRequest)
+            .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            .Where(p => p.CanWrite);
+
+        foreach (var property in properties)
+        {
+            if (!HttpContext.Request.RouteValues.TryGetValue(
+                    property.Name, out var value))
+                continue;
+
+            if (value is null)
+                continue;
+
+            var targetType = Nullable.GetUnderlyingType(property.PropertyType)
+                             ?? property.PropertyType;
+
+            var convertedValue = targetType.IsInstanceOfType(value)
+                ? value
+                : Convert.ChangeType(
+                    value,
+                    targetType,
+                    CultureInfo.InvariantCulture);
+
+            property.SetValue(request, convertedValue);
+        }
     }
 }
