@@ -30,7 +30,8 @@ public static class OpenApiDocumentExtensions
                 c.MaxEndpointVersion = definition.ApiVersion;
                 c.EndpointFilter = definition.EndpointFilter;
                 c.AutoTagPathSegmentIndex = 0;
-
+                c.FlattenSchema = true;
+                
                 c.DocumentSettings = s =>
                 {
                     s.DocumentName = definition.DocumentName;
