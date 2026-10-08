@@ -31,18 +31,27 @@ public static class BuildingBlockCorsExtensions
 
     public static string[] ResolveCorsOrigins(IConfiguration configuration)
     {
-        var configuredOrigins = configuration[ConfigurationKey];
-        if (string.IsNullOrWhiteSpace(configuredOrigins))
+        var section = configuration.GetSection(ConfigurationKey);
+        var configuredOrigins = section.GetChildren()
+            .OrderBy(child => int.TryParse(child.Key, out var index) ? index : int.MaxValue)
+            .Select(child => child.Value);
+
+        if (!configuredOrigins.Any() && !string.IsNullOrWhiteSpace(section.Value))
         {
-            return [];
+            configuredOrigins = [section.Value];
         }
 
         var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var origins = new List<string>();
 
-        foreach (var origin in configuredOrigins.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        foreach (var configuredOrigin in configuredOrigins)
         {
-            var normalized = origin.TrimEnd('/');
+            if (string.IsNullOrWhiteSpace(configuredOrigin))
+            {
+                continue;
+            }
+
+            var normalized = configuredOrigin.Trim().TrimEnd('/');
             if (normalized.Length == 0 || !seen.Add(normalized))
             {
                 continue;
