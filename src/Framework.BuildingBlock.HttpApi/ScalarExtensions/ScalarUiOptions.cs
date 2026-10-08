@@ -9,6 +9,11 @@ public class ScalarUiOptions
 
     public string OpenApiPath { get; set; } = DefaultOpenApiPath;
     public string? Title { get; set; }
+    /// <summary>
+    /// Optional Scalar/OpenAPI display version. When empty, the host assembly version is used.
+    /// Per-document <see cref="OpenApiDefinitionOptions.DisplayVersion"/> takes precedence.
+    /// </summary>
+    public string? DisplayVersion { get; set; }
     public string? BaseServerUrl { get; set; }
     public List<OpenApiServerOption> Servers { get; set; } = [];
     public OpenApiDefinitionOptions[] Definitions { get; set; } = [];

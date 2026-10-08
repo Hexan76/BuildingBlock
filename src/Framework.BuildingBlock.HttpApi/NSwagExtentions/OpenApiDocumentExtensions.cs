@@ -36,7 +36,7 @@ public static class OpenApiDocumentExtensions
                 {
                     s.DocumentName = definition.DocumentName;
                     s.Title = definition.Title;
-                    s.Version = definition.Version;
+                    s.Version = ResolveDisplayVersion(definition);
 
                     var servers = definition.Servers
                         .Where(server => !string.IsNullOrWhiteSpace(server.Url))
@@ -63,6 +63,19 @@ public static class OpenApiDocumentExtensions
         }
 
         return services;
+    }
+
+    internal static string ResolveDisplayVersion(
+        OpenApiDefinitionOptions? definition,
+        string? globalDisplayVersion = null)
+    {
+        if (definition is { DisplayVersion: { Length: > 0 } documentVersion })
+            return documentVersion;
+
+        if (!string.IsNullOrWhiteSpace(globalDisplayVersion))
+            return globalDisplayVersion;
+
+        return AssemblyDisplayVersion.Read();
     }
 
     internal static void ApplyServers(OpenApiDocument document, IEnumerable<OpenApiServerOption> servers)

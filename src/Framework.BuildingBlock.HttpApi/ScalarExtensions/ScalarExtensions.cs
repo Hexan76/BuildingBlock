@@ -60,6 +60,10 @@ public static class ScalarExtensions
             openApi.PostProcess = (document, request) =>
             {
                 var definition = MatchDefinition(request, options.Definitions);
+                document.Info.Version = OpenApiDocumentExtensions.ResolveDisplayVersion(
+                    definition,
+                    options.DisplayVersion);
+
                 var servers = ResolveServers(definition, options.Servers);
                 if (servers.Count == 0)
                 {
@@ -74,13 +78,18 @@ public static class ScalarExtensions
         {
             scalar.WithOpenApiRoutePattern(options.OpenApiPath);
 
+            var displayVersion = OpenApiDocumentExtensions.ResolveDisplayVersion(
+                options.Definitions.FirstOrDefault(definition => definition.IsDefault)
+                    ?? options.Definitions.FirstOrDefault(),
+                options.DisplayVersion);
+
             if (!string.IsNullOrWhiteSpace(options.Title))
             {
-                scalar.WithTitle(options.Title);
+                scalar.WithTitle($"{options.Title} {displayVersion}");
             }
             else if (options.Definitions is { Length: 1 })
             {
-                scalar.WithTitle(options.Definitions[0].Title);
+                scalar.WithTitle($"{options.Definitions[0].Title} {displayVersion}");
             }
 
             if (!string.IsNullOrWhiteSpace(options.BaseServerUrl))

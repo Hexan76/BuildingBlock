@@ -7,6 +7,10 @@ public class OpenApiDefinitionOptions
     public string DocumentName { get; set; } = "v1";
     public string Title { get; set; } = "API";
     public string Version { get; set; } = "v1";
+    /// <summary>
+    /// Optional Scalar/OpenAPI display version. When empty, the host assembly version is used.
+    /// </summary>
+    public string? DisplayVersion { get; set; }
     public int ApiVersion { get; set; } = 1;
     public bool ExcludeNonFastEndpoints { get; set; } = true;
     public bool EnableJWTBearerAuth { get; set; } = false;
