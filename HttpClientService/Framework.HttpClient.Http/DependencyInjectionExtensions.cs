@@ -179,7 +179,14 @@ public static class DependencyInjectionExtensions
 
         foreach (var header in options.DefaultHeaders)
         {
-            client.DefaultRequestHeaders.TryAddWithoutValidation(header.Key, header.Value);
+            if (string.IsNullOrWhiteSpace(header.Name))
+            {
+                continue;
+            }
+
+            client.DefaultRequestHeaders.TryAddWithoutValidation(
+                header.Name.Trim(),
+                header.Value ?? string.Empty);
         }
     }
 

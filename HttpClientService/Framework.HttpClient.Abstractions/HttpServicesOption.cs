@@ -13,5 +13,11 @@ public class HttpClientItemServiceOptions
 
     public TimeSpan? Timeout { get; set; }
 
-    public Dictionary<string, string> DefaultHeaders { get; set; } = new();
+    public List<HttpHeaderOption> DefaultHeaders { get; set; } = [];
+}
+
+public class HttpHeaderOption
+{
+    public string Name { get; set; } = default!;
+    public string Value { get; set; } = default!;
 }
