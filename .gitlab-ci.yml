@@ -1,0 +1,127 @@
+stages:
+  - build
+  - push
+
+default:
+  tags:
+    - deploy
+
+variables:
+  DOTNET_SDK_IMAGE: "mcr.microsoft.com/dotnet/sdk:10.0"
+  NUGET_SOURCE_NAME: "gitlab"
+  # NUGET_SOURCE_URL, NUGET_USERNAME and NUGET_PASSWORD come from GitLab CI/CD variables.
+
+workflow:
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /^[0-9]+\.[0-9]+\.[0-9]+$/'
+
+.pipeline_rules: &pipeline_rules
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /^[0-9]+\.[0-9]+\.[0-9]+$/'
+
+before_script:
+  - echo "Running on shell runner"
+  - docker --version
+  - |
+    if ! echo "$CI_COMMIT_TAG" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+      echo "Tag must be numeric x.y.z (like 1.0.1), got: $CI_COMMIT_TAG"
+      exit 1
+    fi
+    PACKAGE_VERSION="$CI_COMMIT_TAG"
+    export PACKAGE_VERSION
+    echo "Tag=$CI_COMMIT_TAG Version=$PACKAGE_VERSION"
+
+    run_dotnet() {
+      docker run --rm \
+        --entrypoint bash \
+        --user "$(id -u):$(id -g)" \
+        -e HOME=/tmp/dotnet-home \
+        -e DOTNET_CLI_HOME=/tmp/dotnet-home \
+        -e NUGET_PACKAGES=/tmp/nuget-packages \
+        -e DOTNET_NOLOGO=1 \
+        -e DOTNET_CLI_TELEMETRY_OPTOUT=1 \
+        -e PACKAGE_VERSION \
+        -e NUGET_SOURCE_URL \
+        -e NUGET_USERNAME \
+        -e NUGET_PASSWORD \
+        -e NUGET_SOURCE_NAME \
+        -v "$CI_PROJECT_DIR":/src \
+        -w /src \
+        "$DOTNET_SDK_IMAGE" \
+        -c "$1"
+    }
+
+build_packages:
+  stage: build
+  <<: *pipeline_rules
+  script:
+    - |
+      set -e
+      rm -rf nupkgs
+      mkdir -p nupkgs
+
+      run_dotnet '
+        set -euo pipefail
+        mkdir -p "$HOME" /tmp/nuget-packages
+
+        dotnet restore Framework.BuildingBlock.sln
+
+        find . -name "*.csproj" \
+          -not -path "*/test/*" \
+          -not -path "*/bin/*" \
+          -not -path "*/obj/*" \
+          | sort \
+          | while IFS= read -r proj; do
+              echo "Packing $proj ($PACKAGE_VERSION)"
+              dotnet pack "$proj" \
+                -c Release \
+                -o /src/nupkgs \
+                -p:Version="$PACKAGE_VERSION" \
+                -p:ContinuousIntegrationBuild=true \
+                --no-restore \
+                || exit 1
+            done
+
+        echo "Packages:"
+        ls -1 /src/nupkgs/*.nupkg
+      '
+  artifacts:
+    paths:
+      - nupkgs/*.nupkg
+    expire_in: 7 days
+
+push_packages:
+  stage: push
+  <<: *pipeline_rules
+  needs:
+    - build_packages
+  script:
+    - |
+      set -e
+
+      if [ -z "$NUGET_SOURCE_URL" ] || [ -z "$NUGET_USERNAME" ] || [ -z "$NUGET_PASSWORD" ]; then
+        echo "Set NUGET_SOURCE_URL, NUGET_USERNAME and NUGET_PASSWORD in GitLab CI/CD variables"
+        exit 1
+      fi
+
+      echo "Pushing $PACKAGE_VERSION"
+      echo "Source: $NUGET_SOURCE_URL"
+
+      run_dotnet '
+        set -euo pipefail
+        mkdir -p "$HOME"
+
+        dotnet nuget add source "$NUGET_SOURCE_URL" \
+          --name "$NUGET_SOURCE_NAME" \
+          --username "$NUGET_USERNAME" \
+          --password "$NUGET_PASSWORD" \
+          --store-password-in-clear-text
+
+        for pkg in /src/nupkgs/*.nupkg; do
+          echo "Pushing $(basename "$pkg")"
+          dotnet nuget push "$pkg" \
+            --source "$NUGET_SOURCE_NAME" \
+            --api-key "$NUGET_PASSWORD" \
+            --skip-duplicate
+        done
+      '
