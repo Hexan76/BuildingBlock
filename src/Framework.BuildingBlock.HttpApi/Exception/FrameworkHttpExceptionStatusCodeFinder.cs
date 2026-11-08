@@ -22,6 +22,8 @@ public class FrameworkHttpExceptionStatusCodeFinder : IHttpExceptionStatusCodeFi
 
             EntityNotFoundException => HttpStatusCode.NotFound,
 
+            Framework.BuildingBlock.Data.EntityNotFoundException => HttpStatusCode.NotFound,
+
             ResourceNotFoundException => HttpStatusCode.NotFound,
 
             InsufficientStockException => HttpStatusCode.BadRequest,
